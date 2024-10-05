@@ -24,15 +24,40 @@ export default function HomePage(props) {
             console.log(error.message)          
             return
         }
-    }
+        setRecordingStatus('Recording')
+    
 
     // create new media recorder instance using the stream
 
     const media = new MediaRecorder(tempStream, {type: mimeType})
     mediaRecorder.current = media
 
-    mediaRecorder.current = start()
+    mediaRecorder.current.start()
     let localAudioChunks = []
+    mediaRecorder.current.ondataavailable = (event) => {
+        if (typeof event.data === 'undefined') {return}
+        if (event.data.size === 0) {return}
+        localAudioChunks.push(event.data)
+    }
+    setAudioChunks(localAudioChunks)
+    }
+
+    async function stopRecording(params) {
+        setRecordingStatus('inactive')
+        console.log('Stop Recording')
+
+        mediaRecorder.current.stop()
+        mediaRecorder.current.stop = () => {
+            const audioBlob = new Blob(audioChunks, {type: mimeType})
+            setAudioStream(audioBlob)
+            setAudioChunks([])
+        }
+    }
+
+    useEffect(() => {
+        
+    })
+
 
   return (
     <main className='flex-1 bg-yellow-200 p-4 flex flex-col gap-3 text-center sm:gap-4 md:gap-5 justify-center pd-20'>
