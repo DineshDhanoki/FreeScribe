@@ -4,7 +4,7 @@ import Translation from './Translation'
 
 export default function Information(props) {
     const [tab, setTab] = useState('transcription')
-    // const [translation, setTranslation] = useState('translation')
+        // const [translation, setTranslation] = useState('translation')
 
   return (
     <main className='flex-1 p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 max-w-prose w-full mx-auto'>
@@ -13,11 +13,15 @@ export default function Information(props) {
         <button onClick={() => setTab('transcription')} className={'px-4 rounded duration-200 py-1 ' + (tab === 'transcription' ? ' bg-blue-300 text-white' : ' text-blue-400 hover:text-blue-600')}>Transcription</button>
         <button onClick={() => setTab('translation')} className={'px-4 rounded duration-200 py-1  ' + (tab === 'translation' ? ' bg-blue-300 text-white' : ' text-blue-400 hover:text-blue-600')}>Translation</button>
         </div>
-        </main>
-  )
+        
+
+  
   {tab === 'transcription' ? (
     <Transcription />
   ) : (
     <Translation />
   )}
-}
+    </main>
+    )}
+
+
