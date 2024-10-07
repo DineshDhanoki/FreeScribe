@@ -11,11 +11,11 @@ export default function HomePage(props) {
 
     const mimeType = 'audio/webm'
 
-    async function startRecording(params) {
+    async function startRecording() {
         let tempStream
         console.log('Start Recording')
         try {
-            const streamData = navigator.mediaDevices.getUserMedia({
+            const streamData = await navigator.mediaDevices.getUserMedia({
                 audio: true,
                 video: false
             })
@@ -24,7 +24,7 @@ export default function HomePage(props) {
             console.log(error.message)          
             return
         }
-        setRecordingStatus('Recording')
+        setRecordingStatus('recording')
     
 
     // create new media recorder instance using the stream
@@ -42,32 +42,44 @@ export default function HomePage(props) {
     setAudioChunks(localAudioChunks)
     }
 
-    async function stopRecording(params) {
+    async function stopRecording() {
         setRecordingStatus('inactive')
         console.log('Stop Recording')
 
         mediaRecorder.current.stop()
-        mediaRecorder.current.stop = () => {
+        mediaRecorder.current.onstop = () => {
             const audioBlob = new Blob(audioChunks, {type: mimeType})
             setAudioStream(audioBlob)
             setAudioChunks([])
+            setDuration(0)
         }
     }
 
     useEffect(() => {
-        
+        if (recordingStatus === 'inactive') {return}
+
+        const interval = setInterval(() => {
+            setDuration(curr => curr + 1)
+        }, 1000)
+
+        return () => clearInterval(interval)
     })
 
 
   return (
-    <main className='flex-1 bg-yellow-200 p-4 flex flex-col gap-3 text-center sm:gap-4 md:gap-5 justify-center pd-20'>
+    <main className='flex-1 bg-yellow-200 p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pd-20'>
         <h1 className='font-semibold text-5xl sm:text-6xl md:text-7xl'>Free<span className='text-blue-400 bold'>Scribe</span></h1>
         <h3 className='font-medium md:text-lg'>Record 
         <span className='text-blue-400'> &rArr; </span>Transcribe 
         <span className='text-blue-400'> &rArr; </span>Translate</h3>
-        <button className='flex specialBtn px-4 py-2 rounded-xl items-center text-base justify-between gap-4 mx-auto w-72 max-w-full my-4'>
-            <p className='text-blue-400'>Record</p>
-            <i className="fa-solid fa-microphone"></i>
+        <button onClick={recordingStatus === 'recording' ? stopRecording : startRecording} className='flex specialBtn px-4 py-2 rounded-xl items-center text-base justify-between gap-4 mx-auto w-72 max-w-full my-4'>
+            <p className='text-blue-400'>{recordingStatus === 'inactive' ? 'Record' : `Stop Recording`}</p>
+            <div className='flex items-center gap-2'>
+            {duration && (
+                <p className='sm'>{duration}s</p>
+            )}
+            <i className={"fa-solid duration-200 fa-microphone" + (recordingStatus === 'recording' ? 'text-rose-400' : "")}></i>
+            </div>
         </button>
         <p className='text-base'>Or <label className='text-blue-600 cursor-pointer hover:text-red-600 duration-200'>upload 
         <input onChange={(e) => {
