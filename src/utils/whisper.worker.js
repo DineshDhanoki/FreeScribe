@@ -120,7 +120,7 @@ class GenerationTracker {
         )
 
         this.processed_chunks = chunks.map((chunk, index) => {
-            return this.processed_chunks(chunk, index)
+            return this.processChunk(chunk, index)
         })
 
         createResultMessage(
