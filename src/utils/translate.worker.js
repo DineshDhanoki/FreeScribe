@@ -1,40 +1,65 @@
-import { pipeline } from '@xenova/transformers';
+import { pipeline } from '@huggingface/transformers'
+import { isTranslationRequest, TranslationMessageType, WorkerMessageType } from '../services/workers/protocol'
+import { createRequestGate } from '../services/workers/requestGate'
+import { getTranslationLanguage, TRANSLATION_MODEL } from '../services/models/modelConfig'
 
-class MyTranslationPipeline {
-    static task = 'translation';
-    static model = 'Xenova/nllb-200-distilled-600M';
-    static instance = null;
+class TranslationPipeline {
+    static task = TRANSLATION_MODEL.task
+    static model = TRANSLATION_MODEL.id
+    static instance = null
 
-    static async getInstance(progress_callback = null) {
+    static async getInstance(progressCallback = null) {
         if (this.instance === null) {
-            this.instance = pipeline(this.task, this.model, { progress_callback });
+            this.instance = pipeline(this.task, this.model, { progress_callback: progressCallback, revision: TRANSLATION_MODEL.revision }).catch((error) => {
+                this.instance = null
+                throw error
+            })
         }
-
-        return this.instance;
+        return this.instance
     }
 }
 
+const requestGate = createRequestGate()
+
 self.addEventListener('message', async (event) => {
-    let translator = await MyTranslationPipeline.getInstance(x => {
-        self.postMessage(x)
-    })
-    console.log(event.data)
-    let output = await translator(event.data.text, {
-        tgt_lang: event.data.tgt_lang,
-        src_lang: event.data.src_lang,
+    if (event.data?.type === WorkerMessageType.CANCEL) {
+        requestGate.invalidate()
+        return
+    }
 
-        callback_function: x => {
-            self.postMessage({
-                status: 'update',
-                output: translator.tokenizer.decode(x[0].output_token_ids, { skip_special_tokens: true })
-            })
-        }
-    })
+    if (!isTranslationRequest(event.data)) {
+        self.postMessage({ type: TranslationMessageType.ERROR, message: 'Invalid translation request.' })
+        return
+    }
+    if (!getTranslationLanguage(event.data.src_lang) || !getTranslationLanguage(event.data.tgt_lang)) {
+        self.postMessage({ type: TranslationMessageType.ERROR, message: 'Unsupported translation language.' })
+        return
+    }
 
-    console.log('HEHEHHERERE', output)
+    const requestId = requestGate.begin()
+    try {
+        self.postMessage({ type: TranslationMessageType.INITIATE })
+        const translator = await TranslationPipeline.getInstance((progress) => {
+            if (!requestGate.isActive(requestId)) return
+            const value = typeof progress === 'number' ? progress : Number(progress?.progress)
+            if (Number.isFinite(value)) self.postMessage({ type: TranslationMessageType.PROGRESS, progress: value })
+        })
+        if (!requestGate.isActive(requestId)) return
+        const result = await translator(event.data.text, {
+            tgt_lang: event.data.tgt_lang,
+            src_lang: event.data.src_lang,
+        })
+        if (!requestGate.isActive(requestId)) return
+        const text = Array.isArray(result)
+            ? result.map((item) => item.translation_text || item.text || '').join(' ').trim()
+            : result?.translation_text || result?.text || String(result || '')
 
-    self.postMessage({
-        status: 'complete',
-        output
-    })
+        self.postMessage({ type: TranslationMessageType.UPDATE, output: text })
+        self.postMessage({ type: TranslationMessageType.COMPLETE, output: text })
+    } catch (error) {
+        if (requestGate.isActive(requestId)) self.postMessage({
+            type: TranslationMessageType.ERROR,
+            message: error.message || 'Translation failed.',
+        })
+    }
 })
