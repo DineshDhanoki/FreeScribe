@@ -1,18 +1,28 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { getSpeechModel, SPEECH_MODELS, TRANSCRIPTION_LANGUAGES } from '../services/models/modelConfig'
 
 export default function FileDisplay(props) {
-    const { handleAudioReset, file, audioStream, handleFormSubmission } = props
+    const { handleAudioReset, file, audioStream, handleFormSubmission, modelId, setModelId, languageId, setLanguageId } = props
     const audioRef = useRef()
+    const selectedModel = getSpeechModel(modelId)
+
+    function handleModelChange(event) {
+        const nextModelId = event.target.value
+        setModelId(nextModelId)
+        if (!getSpeechModel(nextModelId).supportsMultilingual && languageId !== 'en') setLanguageId('en')
+    }
 
     useEffect(() => {
         if (!file && !audioStream) { return }
+        let objectUrl
         if (file) {
-            console.log('HERE FILE', file)
-            audioRef.current.src = URL.createObjectURL(file)
+            objectUrl = URL.createObjectURL(file)
         } else {
-            console.log('EHER AUDIO', audioStream)
-            audioRef.current.src = URL.createObjectURL(audioStream)
+            objectUrl = URL.createObjectURL(audioStream)
         }
+        audioRef.current.src = objectUrl
+        return () => URL.revokeObjectURL(objectUrl)
     }, [audioStream, file])
 
 
@@ -28,6 +38,22 @@ export default function FileDisplay(props) {
                     Your browser does not support the audio element.
                 </audio>
             </div>
+            <label className='flex flex-col gap-1 text-left'>
+                <span className='text-xs font-medium text-slate-500'>Transcription model</span>
+                <select aria-label='Transcription model' value={modelId} onChange={handleModelChange} className='rounded border border-slate-200 bg-white p-2'>
+                    {SPEECH_MODELS.map((model) => (
+                        <option key={model.id} value={model.id}>{model.label} — {model.approximateSize}</option>
+                    ))}
+                </select>
+            </label>
+            <label className='flex flex-col gap-1 text-left'>
+                <span className='text-xs font-medium text-slate-500'>Spoken language</span>
+                <select aria-label='Spoken language' value={languageId} onChange={(event) => setLanguageId(event.target.value)} className='rounded border border-slate-200 bg-white p-2'>
+                    {TRANSCRIPTION_LANGUAGES.map((language) => (
+                        <option key={language.id} value={language.id} disabled={!selectedModel.supportsMultilingual && language.id !== 'en'}>{language.label}{!selectedModel.supportsMultilingual && language.id !== 'en' ? ' — choose a multilingual model' : ''}</option>
+                    ))}
+                </select>
+            </label>
             <div className='flex items-center justify-between gap-4'>
                 <button onClick={handleAudioReset} className='text-slate-400 hover:text-blue-600 duration-200'>Reset</button>
                 <button onClick={handleFormSubmission} className='specialBtn  px-3 p-2 rounded-lg text-blue-400 flex items-center gap-2 font-medium '>
@@ -37,4 +63,15 @@ export default function FileDisplay(props) {
             </div>
         </main>
     )
+}
+
+FileDisplay.propTypes = {
+    handleAudioReset: PropTypes.func.isRequired,
+    handleFormSubmission: PropTypes.func.isRequired,
+    file: PropTypes.shape({ name: PropTypes.string }),
+    audioStream: PropTypes.object,
+    modelId: PropTypes.string.isRequired,
+    setModelId: PropTypes.func.isRequired,
+    languageId: PropTypes.string.isRequired,
+    setLanguageId: PropTypes.func.isRequired,
 }
