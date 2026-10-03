@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run security:audit
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run evaluate:fixture -- --output evaluation/results/transcription.json
+      - run: npm run evaluate:translation -- --output evaluation/results/translation.json
+      - run: npm run audit:fixture
+      - run: npm run check:transcription
+      - run: npm run check:translation
+      - run: npm run summarize:performance -- --output evaluation/results/performance.json
+      - run: npm run lint
+      - run: npm run build
+      - run: git diff --check
+      - name: Upload evaluation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freescribe-evaluation-${{ github.run_id }}
+          path: evaluation/results/
+          if-no-files-found: warn
