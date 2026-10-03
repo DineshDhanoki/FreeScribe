@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "datasetId": "synthetic-transcription-smoke",
+    "source": "synthetic fixture",
+    "license": "internal test data",
+    "consentStatus": "not applicable",
+    "split": "smoke"
+  },
+  "records": [
+    {
+      "id": "synthetic-smoke-fixture",
+      "language": "en",
+      "model": "fixture",
+      "modelRevision": "synthetic-fixture-v1",
+      "condition": "synthetic",
+      "reference": "The quick brown fox jumps over the lazy dog",
+      "hypothesis": "The quick brown fox jumps over a lazy dog"
+    }
+  ]
+}

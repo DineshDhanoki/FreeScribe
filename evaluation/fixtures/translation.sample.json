@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "datasetId": "synthetic-translation-smoke",
+    "source": "synthetic fixture",
+    "license": "internal test data",
+    "consentStatus": "not applicable",
+    "split": "smoke"
+  },
+  "records": [
+    {
+      "id": "synthetic-translation-match",
+      "language": "es",
+      "model": "fixture",
+      "modelRevision": "synthetic-fixture-v1",
+      "reference": "hola mundo",
+      "hypothesis": "hola mundo"
+    },
+    {
+      "id": "synthetic-translation-variant",
+      "language": "fr",
+      "model": "fixture",
+      "modelRevision": "synthetic-fixture-v1",
+      "reference": "bonjour le monde",
+      "hypothesis": "bonjour monde"
+    }
+  ]
+}

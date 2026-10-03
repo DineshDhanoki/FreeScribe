@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "datasetId": "synthetic-transcription-split-smoke",
+    "source": "synthetic fixture",
+    "license": "internal test data",
+    "consentStatus": "not applicable",
+    "split": "test"
+  },
+  "records": [
+    {
+      "id": "test-example-1",
+      "language": "en",
+      "model": "fixture",
+      "modelRevision": "synthetic-fixture-v1",
+      "speakerGroup": "synthetic-speaker-test",
+      "reference": "hello from testing",
+      "hypothesis": "hello from testing"
+    }
+  ]
+}

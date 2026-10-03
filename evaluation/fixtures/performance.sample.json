@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "benchmarkId": "synthetic-performance-smoke",
+    "source": "synthetic fixture",
+    "deviceProfile": "not applicable",
+    "browser": "not applicable"
+  },
+  "runs": [
+    {
+      "modelId": "Xenova/whisper-tiny.en",
+      "modelRevision": "79fb389fc764e7c395bd330e9531d9d32ada7049",
+      "cacheState": "cold",
+      "audioDurationSeconds": 10,
+      "elapsedMs": 12000,
+      "realTimeFactor": 0.8333333333
+    },
+    {
+      "modelId": "Xenova/whisper-tiny.en",
+      "modelRevision": "79fb389fc764e7c395bd330e9531d9d32ada7049",
+      "cacheState": "warm",
+      "audioDurationSeconds": 10,
+      "elapsedMs": 5000,
+      "realTimeFactor": 2
+    },
+    {
+      "modelId": "Xenova/whisper-tiny.en",
+      "modelRevision": "79fb389fc764e7c395bd330e9531d9d32ada7049",
+      "cacheState": "warm",
+      "audioDurationSeconds": 10,
+      "elapsedMs": 4500,
+      "realTimeFactor": 2.2222222222
+    }
+  ]
+}
