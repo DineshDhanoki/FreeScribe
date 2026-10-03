@@ -18,6 +18,15 @@ describe('speech model configuration', () => {
     expect(getTranscriptionLanguage('missing').id).toBe('en')
   })
 
+  it('keeps the core Indian language set available in the multilingual UI', () => {
+    const indianLanguageIds = ['hi', 'bn', 'mr', 'te', 'ta', 'gu', 'ur', 'kn', 'ml', 'pa', 'or', 'as', 'ne', 'sa']
+    for (const languageId of indianLanguageIds) {
+      const language = getTranscriptionLanguage(languageId)
+      expect(language.whisper).toEqual(expect.any(String))
+      expect(language.nllb).toEqual(expect.any(String))
+    }
+  })
+
   it('maps only known NLLB translation language codes', () => {
     expect(getTranslationLanguage('spa_Latn')).toMatchObject({ id: 'spa_Latn', nllb: 'spa_Latn', label: 'Spanish' })
     expect(getTranslationLanguage('afr_Latn')).toMatchObject({ nllb: 'afr_Latn', label: 'Afrikaans' })
