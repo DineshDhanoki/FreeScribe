@@ -45,6 +45,7 @@ export default function FileDisplay(props) {
                         <option key={model.id} value={model.id}>{model.label} — {model.approximateSize}</option>
                     ))}
                 </select>
+                <span className='text-xs text-slate-500'>{selectedModel.description}</span>
             </label>
             <label className='flex flex-col gap-1 text-left'>
                 <span className='text-xs font-medium text-slate-500'>Spoken language</span>
