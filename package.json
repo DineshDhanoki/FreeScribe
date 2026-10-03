@@ -6,16 +6,33 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "evaluate:fixture": "node scripts/evaluate-fixture.js",
+    "evaluate:translation": "node scripts/evaluate-translation-fixture.js",
+    "audit:dataset": "node scripts/audit-dataset.js",
+    "audit:fixture": "node scripts/audit-dataset.js --input evaluation/fixtures/dev.sample.json --input evaluation/fixtures/test.sample.json",
+    "check:transcription": "node scripts/check-evaluation.js --type transcription --max-wer 0.2 --max-cer 0.2 --min-examples 1",
+    "check:translation": "node scripts/check-evaluation.js --type translation --min-exact-match-rate 0.5 --min-character-fscore 0.7 --min-examples 2",
+    "summarize:performance": "node scripts/summarize-performance.js",
+    "merge:performance": "node scripts/merge-performance.js",
+    "security:audit": "npm audit --omit=dev",
+    "verify": "npm test && npm run evaluate:fixture && npm run evaluate:translation && npm run audit:fixture && npm run check:transcription && npm run check:translation && npm run summarize:performance && npm run lint && npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@xenova/transformers": "^2.17.2",
+    "@huggingface/transformers": "^4.3.0",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@playwright/test": "^1.63.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
@@ -24,9 +41,12 @@
     "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.12",
+    "fake-indexeddb": "^6.2.4",
     "globals": "^15.9.0",
+    "jsdom": "^29.1.1",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vitest": "^4.1.11"
   }
 }
