@@ -36,6 +36,8 @@ The first transcription or translation downloads model files and may require sig
 - [Contributing](CONTRIBUTING.md)
 - [Performance](PERFORMANCE.md)
 - [Code of conduct](CODE_OF_CONDUCT.md)
+- [Governance](GOVERNANCE.md)
+- [Getting help](SUPPORT.md)
 - [License](LICENSE)
 
 ## Current limitations
