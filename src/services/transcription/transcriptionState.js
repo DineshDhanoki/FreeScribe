@@ -14,6 +14,7 @@ export const TranscriptionAction = Object.freeze({
   DOWNLOAD_PROGRESS: 'download_progress',
   MODEL_READY: 'model_ready',
   INFERENCE_PROGRESS: 'inference_progress',
+  LANGUAGE_DETECTED: 'language_detected',
   RESULT: 'result',
   COMPLETE: 'complete',
   ERROR: 'error',
@@ -30,6 +31,8 @@ export function createInitialTranscriptionState() {
     error: null,
     progress: null,
     phase: null,
+    detectedLanguageId: null,
+    languageConfidence: null,
     metrics: null,
   }
 }
@@ -51,6 +54,12 @@ export function transcriptionReducer(state, action) {
       return { ...state, status: TranscriptionStatus.TRANSCRIBING, phase: null, error: null }
     case TranscriptionAction.INFERENCE_PROGRESS:
       return { ...state, status: TranscriptionStatus.TRANSCRIBING, phase: action.phase || 'transcribing', error: null }
+    case TranscriptionAction.LANGUAGE_DETECTED:
+      return {
+        ...state,
+        detectedLanguageId: action.languageId,
+        languageConfidence: action.confidence,
+      }
     case TranscriptionAction.RESULT:
       return { ...state, output: action.output, status: TranscriptionStatus.TRANSCRIBING }
     case TranscriptionAction.COMPLETE:

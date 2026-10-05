@@ -12,7 +12,7 @@
 
 The tiny English model is useful for a lightweight demonstration, but it is not sufficient for high-accuracy, multilingual, clinical, legal, or safety-critical transcription. Accuracy varies with accent, noise, microphone quality, speaking rate, and domain vocabulary.
 
-The UI also exposes the multilingual tiny model and the larger English base model. These options trade download size and latency for language coverage or accuracy; they are not yet backed by a benchmark report.
+The UI exposes multilingual tiny and base models plus English-only tiny and base models. The multilingual base model is the better-quality browser option for non-English speech, while the multilingual tiny model prioritizes speed and download size. These options trade download size and latency for language coverage or accuracy; they are not yet backed by a representative multilingual benchmark report.
 
 ## Translation
 
