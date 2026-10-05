@@ -52,6 +52,33 @@ export const LANGUAGE_DETECTION_MODEL = Object.freeze({
   license: 'cc-by-4.0',
 })
 
+// Transformers.js may expose MMS labels as LABEL_<index> when the model's
+// id2label metadata is unavailable in the browser cache. Keep the supported
+// language mapping local so automatic detection remains deterministic.
+export const LANGUAGE_DETECTION_LABELS = Object.freeze({
+  0: 'ara',
+  1: 'cmn',
+  2: 'eng',
+  3: 'spa',
+  4: 'fra',
+  11: 'asm',
+  12: 'ben',
+  16: 'hin',
+  18: 'urd',
+  23: 'tel',
+  29: 'mar',
+  36: 'mal',
+  46: 'tam',
+  55: 'deu',
+  70: 'pan',
+  71: 'jpn',
+  76: 'guj',
+  77: 'kan',
+  79: 'ukr',
+  93: 'ita',
+  127: 'san',
+})
+
 export const TRANSCRIPTION_LANGUAGES = Object.freeze([
   { id: 'auto', label: 'Auto-detect language', whisper: null, nllb: null, isAuto: true },
   { id: 'en', label: 'English', whisper: 'english', nllb: 'eng_Latn', lid: 'eng' },
@@ -111,6 +138,16 @@ export function getTranscriptionLanguage(languageId) {
 export function getTranscriptionLanguageByLid(label) {
   const normalizedLabel = String(label || '').trim().toLowerCase()
   return TRANSCRIPTION_LANGUAGES.find((language) => language.lid === normalizedLabel) || null
+}
+
+export function getTranscriptionLanguageByDetectionLabel(label) {
+  const normalizedLabel = String(label || '').trim().toLowerCase()
+  const numericLabel = normalizedLabel.match(/^label[_-](\d+)$/)
+  const lid = numericLabel
+    ? LANGUAGE_DETECTION_LABELS[numericLabel[1]]
+    : normalizedLabel.replace(/^__label__/, '').replace(/^__|__$/g, '')
+
+  return getTranscriptionLanguageByLid(lid)
 }
 
 export function getTranslationLanguage(languageId) {

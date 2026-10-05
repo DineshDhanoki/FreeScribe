@@ -6,7 +6,7 @@ import { normalizeWhisperOutput } from '../services/transcription/whisperOutput'
 import {
     DEFAULT_SPEECH_MODEL,
     getSpeechModel,
-    getTranscriptionLanguageByLid,
+    getTranscriptionLanguageByDetectionLabel,
     isSupportedSpeechModel,
     isSupportedWhisperLanguage,
     LANGUAGE_DETECTION_MODEL,
@@ -130,7 +130,7 @@ async function detectLanguage(audio, requestId) {
     const candidates = Array.isArray(predictions) ? predictions : [predictions]
     const match = candidates
         .map((prediction) => ({
-            language: getTranscriptionLanguageByLid(String(prediction?.label || '').replace(/^__label__/, '').replace(/^__|__$/g, '')),
+            language: getTranscriptionLanguageByDetectionLabel(prediction?.label),
             confidence: Number(prediction?.score),
         }))
         .filter((prediction) => prediction.language && Number.isFinite(prediction.confidence))

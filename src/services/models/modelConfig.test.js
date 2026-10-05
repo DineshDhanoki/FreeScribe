@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_SPEECH_MODEL, getSpeechModel, getTranslationLanguage, getTranscriptionLanguage, isSupportedSpeechModel, isSupportedWhisperLanguage, SPEECH_MODELS, TRANSLATION_MODEL } from './modelConfig'
+import { DEFAULT_SPEECH_MODEL, getSpeechModel, getTranslationLanguage, getTranscriptionLanguage, getTranscriptionLanguageByDetectionLabel, isSupportedSpeechModel, isSupportedWhisperLanguage, SPEECH_MODELS, TRANSLATION_MODEL } from './modelConfig'
 
 describe('speech model configuration', () => {
   it('has a documented default model', () => {
@@ -31,6 +31,12 @@ describe('speech model configuration', () => {
     expect(getTranslationLanguage('spa_Latn')).toMatchObject({ id: 'spa_Latn', nllb: 'spa_Latn', label: 'Spanish' })
     expect(getTranslationLanguage('afr_Latn')).toMatchObject({ nllb: 'afr_Latn', label: 'Afrikaans' })
     expect(getTranslationLanguage('unknown')).toBeNull()
+  })
+
+  it('normalizes browser language-detector labels', () => {
+    expect(getTranscriptionLanguageByDetectionLabel('LABEL_12')).toMatchObject({ id: 'bn', lid: 'ben' })
+    expect(getTranscriptionLanguageByDetectionLabel('__label__hin')).toMatchObject({ id: 'hi', lid: 'hin' })
+    expect(getTranscriptionLanguageByDetectionLabel('LABEL_999')).toBeNull()
   })
 
   it('declares multilingual capability explicitly', () => {
