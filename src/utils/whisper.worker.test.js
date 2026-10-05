@@ -85,8 +85,8 @@ describe('Whisper worker integration', () => {
 
   it('detects a supported language before transcribing in auto mode', async () => {
     const classifier = vi.fn().mockResolvedValue([
-      { label: 'ben', score: 0.94 },
-      { label: 'hin', score: 0.03 },
+      { label: 'LABEL_12', score: 0.94 },
+      { label: 'LABEL_16', score: 0.03 },
     ])
     const transcriber = vi.fn().mockResolvedValue({ chunks: [{ text: 'আমি ভালো আছি', timestamp: [0, 1] }] })
     const pipeline = vi.fn()
