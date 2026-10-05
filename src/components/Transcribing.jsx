@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types'
 
 export default function Transcribing(props) {
-    const { status, downloading, progress, onCancel } = props
+    const { status, phase, downloading, progress, onCancel } = props
     const phaseLabel = status === 'decoding'
         ? 'decoding audio locally'
         : downloading
             ? 'downloading model'
+            : phase === 'detecting'
+                ? 'detecting spoken language locally'
             : 'transcribing audio locally'
 
 
@@ -32,6 +34,7 @@ export default function Transcribing(props) {
 Transcribing.propTypes = {
     status: PropTypes.string,
     downloading: PropTypes.bool,
+    phase: PropTypes.string,
     progress: PropTypes.number,
     onCancel: PropTypes.func.isRequired,
 }

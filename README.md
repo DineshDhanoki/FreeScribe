@@ -42,7 +42,8 @@ The first transcription or translation downloads model files and may require sig
 
 ## Current limitations
 
-- Multilingual transcription defaults to `Xenova/whisper-tiny` and exposes major Indian/South Asian languages (including Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Malayalam, Punjabi, Odia, Assamese, Nepali and Sanskrit) plus major world languages. English-only models intentionally restrict language selection.
+- Multilingual transcription defaults to `Xenova/whisper-tiny` with local automatic spoken-language detection. The UI exposes major Indian/South Asian languages (including Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Malayalam, Punjabi, Odia, Assamese, Nepali and Sanskrit) plus major world languages. English-only models intentionally restrict language selection.
+- Automatic detection loads a separate local speech-language model and analyzes up to the first 15 seconds; first-use download time can be substantial, while warm-cache detection is much faster.
 - Translation quality and supported source/target language pairs depend on the selected NLLB model configuration.
 - Browser support, model performance, and accuracy vary by device and audio quality.
 - No server-side storage is provided.

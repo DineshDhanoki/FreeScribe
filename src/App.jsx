@@ -94,7 +94,10 @@ function App() {
           }
           break;
         case WorkerMessageType.INFERENCE_PROGRESS:
-          dispatchTranscription({ type: TranscriptionAction.INFERENCE_PROGRESS })
+          dispatchTranscription({ type: TranscriptionAction.INFERENCE_PROGRESS, phase: message.phase })
+          break
+        case WorkerMessageType.LANGUAGE_DETECTED:
+          setLanguageId(message.languageId)
           break;
         case WorkerMessageType.RESULT:
           dispatchTranscription({ type: TranscriptionAction.RESULT, output: message.results })
@@ -179,7 +182,7 @@ function App() {
         type: MessageTypes.INFERENCE_REQUEST,
         audio,
         model_name: modelId,
-        language: getTranscriptionLanguage(languageId).whisper,
+        language: getTranscriptionLanguage(languageId).whisper || undefined,
       }, [audio.buffer])
     } catch (submissionError) {
       if (generation !== submissionGeneration.current) return
@@ -201,9 +204,9 @@ function App() {
             </div>
           </main>
         ) : transcription.output ? (
-          <Information output={transcription.output} finished={transcription.status === TranscriptionStatus.SUCCESS} metrics={transcription.metrics} initialTranslation={transcription.translation} initialTranslationLanguage={transcription.translationLanguageId} sourceLanguage={getTranscriptionLanguage(languageId)} modelId={modelId} />
+          <Information output={transcription.output} finished={transcription.status === TranscriptionStatus.SUCCESS} metrics={transcription.metrics} initialTranslation={transcription.translation} initialTranslationLanguage={transcription.translationLanguageId} sourceLanguage={getTranscriptionLanguage(languageId === 'auto' ? 'en' : languageId)} modelId={modelId} />
         ) : [TranscriptionStatus.DECODING, TranscriptionStatus.DOWNLOADING, TranscriptionStatus.TRANSCRIBING].includes(transcription.status) ? (
-          <Transcribing status={transcription.status} downloading={transcription.status === TranscriptionStatus.DOWNLOADING} progress={transcription.progress} onCancel={handleCancel} />
+          <Transcribing status={transcription.status} phase={transcription.phase} downloading={transcription.status === TranscriptionStatus.DOWNLOADING} progress={transcription.progress} onCancel={handleCancel} />
         ) : isAudioAvailable ? (
           <FileDisplay handleFormSubmission={handleFormSubmission} handleAudioReset={handleAudioReset} file={file} audioStream={audioStream} modelId={modelId} setModelId={setModelId} languageId={languageId} setLanguageId={setLanguageId} />
         ) : (

@@ -54,6 +54,7 @@ export default function FileDisplay(props) {
                         <option key={language.id} value={language.id} disabled={!selectedModel.supportsMultilingual && language.id !== 'en'}>{language.label}{!selectedModel.supportsMultilingual && language.id !== 'en' ? ' — choose a multilingual model' : ''}</option>
                     ))}
                 </select>
+                <span className='text-xs text-slate-500'>Auto-detect uses a local speech-language model and then starts transcription.</span>
             </label>
             <div className='flex items-center justify-between gap-4'>
                 <button onClick={handleAudioReset} className='text-slate-400 hover:text-blue-600 duration-200'>Reset</button>
