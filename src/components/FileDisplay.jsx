@@ -42,7 +42,7 @@ export default function FileDisplay(props) {
                 <span className='text-xs font-medium text-slate-500'>Transcription model</span>
                 <select aria-label='Transcription model' value={modelId} onChange={handleModelChange} className='rounded border border-slate-200 bg-white p-2'>
                     {SPEECH_MODELS.map((model) => (
-                        <option key={model.id} value={model.id}>{model.label} — {model.approximateSize}</option>
+                        <option key={model.id} value={model.id}>{model.label} — {model.approximateSize}{model.recommended ? ' — recommended' : ''}</option>
                     ))}
                 </select>
                 <span className='text-xs text-slate-500'>{selectedModel.description}</span>

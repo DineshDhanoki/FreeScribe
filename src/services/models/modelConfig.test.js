@@ -5,6 +5,7 @@ describe('speech model configuration', () => {
   it('has a documented default model', () => {
     expect(getSpeechModel(DEFAULT_SPEECH_MODEL)).toMatchObject({ id: DEFAULT_SPEECH_MODEL, revision: expect.stringMatching(/^[a-f0-9]{40}$/) })
     expect(getSpeechModel(DEFAULT_SPEECH_MODEL).supportsMultilingual).toBe(true)
+    expect(DEFAULT_SPEECH_MODEL).toBe('Xenova/whisper-base')
   })
 
   it('falls back safely for unknown models', () => {

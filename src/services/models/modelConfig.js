@@ -31,6 +31,7 @@ export const SPEECH_MODELS = Object.freeze([
     languages: ['Many languages'],
     supportsMultilingual: true,
     approximateSize: '145 MB',
+    recommended: true,
     description: 'Better multilingual accuracy, with a larger download and slower processing.',
   },
   {
@@ -46,7 +47,7 @@ export const SPEECH_MODELS = Object.freeze([
 
 // Multilingual is the product default so new users can select an Indian or
 // international spoken language without first changing model settings.
-export const DEFAULT_SPEECH_MODEL = SpeechModelId.TINY_MULTILINGUAL
+export const DEFAULT_SPEECH_MODEL = SpeechModelId.BASE_MULTILINGUAL
 
 export const TRANSLATION_MODEL = Object.freeze({
   id: 'Xenova/nllb-200-distilled-600M',

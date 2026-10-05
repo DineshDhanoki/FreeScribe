@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import Transcription from './Transcription'
 import Translation from './Translation'
-import { normalizeSegments, serializeTranscript, transcriptToText } from '../services/transcription/transcript'
+import { hasLikelyHallucination, normalizeSegments, serializeTranscript, transcriptToText } from '../services/transcription/transcript'
 import { saveProject } from '../services/storage/projectStore'
 import { copyText } from '../services/browser/clipboard'
 import { createWorkerClient } from '../services/workers/workerClient'
@@ -91,6 +91,7 @@ export default function Information(props) {
     }, [])
 
     const transcriptText = transcriptToText(segments)
+    const transcriptLooksUnreliable = hasLikelyHallucination(segments)
     const textElement = tab === 'transcription' ? transcriptText : translation || ''
 
     function handleSegmentChange(index, text) {
@@ -228,6 +229,9 @@ export default function Information(props) {
             )}
             {modelId === 'Xenova/whisper-tiny' && sourceLanguage?.id !== 'en' && (
                 <p className='text-xs text-slate-500'>For better non-English accuracy, choose Whisper Base Multilingual before transcribing.</p>
+            )}
+            {transcriptLooksUnreliable && (
+                <p role='alert' className='rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800'>This transcript contains suspicious repetition and may be a model hallucination. Retry with Whisper Base Multilingual and confirm the spoken language.</p>
             )}
             {metrics && <p className='text-xs text-slate-500'>Processed {metrics.audioDurationSeconds.toFixed(1)}s of audio in {(metrics.elapsedMs / 1000).toFixed(1)}s{typeof metrics.realTimeFactor === 'number' && ` · ${metrics.realTimeFactor.toFixed(2)}× real time`}{typeof metrics.memory?.deltaBytes === 'number' && ` · heap Δ ${(metrics.memory.deltaBytes / (1024 * 1024)).toFixed(1)} MB`}</p>}
 

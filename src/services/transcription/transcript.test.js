@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   formatTimestamp,
+  hasLikelyHallucination,
   normalizeSegments,
   serializeTranscript,
   transcriptToSrt,
@@ -36,5 +37,13 @@ describe('transcript domain model', () => {
     expect(serializeTranscript(segments, 'srt').extension).toBe('srt')
     expect(serializeTranscript(segments, 'vtt').extension).toBe('vtt')
   })
-})
 
+  it('flags repeated segments that are likely model hallucinations', () => {
+    expect(hasLikelyHallucination([
+      { text: 'You can do this.' },
+      { text: 'You can do this!' },
+      { text: 'You can do this.' },
+    ])).toBe(true)
+    expect(hasLikelyHallucination(segments)).toBe(false)
+  })
+})

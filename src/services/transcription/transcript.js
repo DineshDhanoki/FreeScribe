@@ -23,6 +23,17 @@ export function transcriptToText(segments) {
   return normalizeSegments(segments).map((segment) => segment.text).join('\n')
 }
 
+export function hasLikelyHallucination(segments) {
+  const normalizedText = normalizeSegments(segments)
+    .map((segment) => segment.text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+  if (normalizedText.length < 3) return false
+
+  const frequencies = new Map()
+  for (const text of normalizedText) frequencies.set(text, (frequencies.get(text) || 0) + 1)
+  return Math.max(...frequencies.values()) >= 3
+}
+
 export function transcriptToJson(segments) {
   return JSON.stringify(normalizeSegments(segments), null, 2)
 }
@@ -58,4 +69,3 @@ export function serializeTranscript(segments, format) {
       return { content: transcriptToText(segments), extension: 'txt', mimeType: 'text/plain' }
   }
 }
-

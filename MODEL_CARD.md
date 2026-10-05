@@ -2,7 +2,7 @@
 
 ## Speech recognition
 
-- Default model ID: `Xenova/whisper-tiny`
+- Default model ID: `Xenova/whisper-base`
 - Task: automatic speech recognition
 - Current scope: automatic or explicit language selection for the supported Indian/South Asian and global language registry.
 - Language identification model: `Xenova/mms-lid-256`, used only for Auto-detect mode on the first 15 seconds of audio.

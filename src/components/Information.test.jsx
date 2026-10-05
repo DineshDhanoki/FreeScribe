@@ -111,6 +111,20 @@ describe('Information translation integration', () => {
     expect(screen.getByText(/Whisper Base Multilingual/)).toBeInTheDocument()
   })
 
+  it('warns when repeated transcript segments look hallucinated', () => {
+    render(
+      <Information
+        {...defaultProps}
+        output={[
+          { text: 'You can do this.', start: 0, end: 2 },
+          { text: 'You can do this.', start: 2, end: 4 },
+          { text: 'You can do this.', start: 4, end: 6 },
+        ]}
+      />,
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('may be a model hallucination')
+  })
+
   it('cancels translation and ignores late worker results', async () => {
     render(
       <Information
