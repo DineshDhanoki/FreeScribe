@@ -98,6 +98,11 @@ function App() {
           break
         case WorkerMessageType.LANGUAGE_DETECTED:
           setLanguageId(message.languageId)
+          dispatchTranscription({
+            type: TranscriptionAction.LANGUAGE_DETECTED,
+            languageId: message.languageId,
+            confidence: message.confidence,
+          })
           break;
         case WorkerMessageType.RESULT:
           dispatchTranscription({ type: TranscriptionAction.RESULT, output: message.results })
@@ -204,7 +209,7 @@ function App() {
             </div>
           </main>
         ) : transcription.output ? (
-          <Information output={transcription.output} finished={transcription.status === TranscriptionStatus.SUCCESS} metrics={transcription.metrics} initialTranslation={transcription.translation} initialTranslationLanguage={transcription.translationLanguageId} sourceLanguage={getTranscriptionLanguage(languageId === 'auto' ? 'en' : languageId)} modelId={modelId} />
+          <Information output={transcription.output} finished={transcription.status === TranscriptionStatus.SUCCESS} metrics={transcription.metrics} initialTranslation={transcription.translation} initialTranslationLanguage={transcription.translationLanguageId} sourceLanguage={getTranscriptionLanguage(languageId === 'auto' ? 'en' : languageId)} languageConfidence={transcription.languageConfidence} languageWasDetected={transcription.detectedLanguageId !== null} modelId={modelId} />
         ) : [TranscriptionStatus.DECODING, TranscriptionStatus.DOWNLOADING, TranscriptionStatus.TRANSCRIBING].includes(transcription.status) ? (
           <Transcribing status={transcription.status} phase={transcription.phase} downloading={transcription.status === TranscriptionStatus.DOWNLOADING} progress={transcription.progress} onCancel={handleCancel} />
         ) : isAudioAvailable ? (

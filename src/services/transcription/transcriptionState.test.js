@@ -16,6 +16,8 @@ describe('transcriptionReducer', () => {
       error: null,
       progress: null,
       phase: null,
+      detectedLanguageId: null,
+      languageConfidence: null,
       metrics: null,
     })
   })
@@ -53,6 +55,15 @@ describe('transcriptionReducer', () => {
       status: TranscriptionStatus.ERROR,
       error: 'Model unavailable',
     })
+  })
+
+  it('preserves the detected language and confidence', () => {
+    const state = transcriptionReducer(createInitialTranscriptionState(), {
+      type: TranscriptionAction.LANGUAGE_DETECTED,
+      languageId: 'bn',
+      confidence: 0.87,
+    })
+    expect(state).toMatchObject({ detectedLanguageId: 'bn', languageConfidence: 0.87 })
   })
 
   it('returns to a reusable cancelled state', () => {

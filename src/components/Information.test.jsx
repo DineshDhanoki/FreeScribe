@@ -97,6 +97,20 @@ describe('Information translation integration', () => {
     expect(await screen.findByRole('progressbar', { name: 'Translation model progress' })).toHaveAttribute('aria-valuenow', '42')
   })
 
+  it('shows the detected spoken language and confidence prominently', () => {
+    render(
+      <Information
+        {...defaultProps}
+        sourceLanguage={{ id: 'bn', label: 'Bengali', nllb: 'ben_Beng' }}
+        languageWasDetected
+        languageConfidence={0.87}
+        modelId='Xenova/whisper-tiny'
+      />,
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('You spoke: Bengali · 87% confidence')
+    expect(screen.getByText(/Whisper Base Multilingual/)).toBeInTheDocument()
+  })
+
   it('cancels translation and ignores late worker results', async () => {
     render(
       <Information

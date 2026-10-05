@@ -1,6 +1,7 @@
 export const SpeechModelId = Object.freeze({
   TINY_ENGLISH: 'Xenova/whisper-tiny.en',
   TINY_MULTILINGUAL: 'Xenova/whisper-tiny',
+  BASE_MULTILINGUAL: 'Xenova/whisper-base',
   BASE_ENGLISH: 'Xenova/whisper-base.en',
 })
 
@@ -22,6 +23,15 @@ export const SPEECH_MODELS = Object.freeze([
     supportsMultilingual: true,
     approximateSize: '75 MB',
     description: 'Fast multilingual transcription with lower accuracy.',
+  },
+  {
+    id: SpeechModelId.BASE_MULTILINGUAL,
+    revision: '64da57285918e20ea79ea5c88eed7197933abaa8',
+    label: 'Whisper Base Multilingual',
+    languages: ['Many languages'],
+    supportsMultilingual: true,
+    approximateSize: '145 MB',
+    description: 'Better multilingual accuracy, with a larger download and slower processing.',
   },
   {
     id: SpeechModelId.BASE_ENGLISH,

@@ -116,6 +116,33 @@ describe('Whisper worker integration', () => {
     expect(transcriber).toHaveBeenCalledWith(expect.any(Float32Array), expect.objectContaining({ language: 'bengali', task: 'transcribe' }))
   })
 
+  it('does not replace an unsupported top prediction with a weaker supported language', async () => {
+    const classifier = vi.fn().mockResolvedValue([
+      { label: 'LABEL_999', score: 0.81 },
+      { label: 'LABEL_12', score: 0.12 },
+    ])
+    const transcriber = vi.fn()
+    const pipeline = vi.fn()
+      .mockImplementationOnce(() => Promise.resolve(transcriber))
+      .mockImplementationOnce(() => Promise.resolve(classifier))
+    vi.doMock('@huggingface/transformers', () => ({ pipeline }))
+    await import('./whisper.worker.js')
+
+    await messageHandler({
+      data: {
+        type: MessageTypes.INFERENCE_REQUEST,
+        audio: new Float32Array(16000),
+        model_name: 'Xenova/whisper-tiny',
+      },
+    })
+
+    expect(transcriber).not.toHaveBeenCalled()
+    expect(postedMessages).toContainEqual({
+      type: WorkerMessageType.ERROR,
+      message: 'The most likely spoken language is not supported by automatic mode. Please select the spoken language manually.',
+    })
+  })
+
   it('does not publish a result after cancellation', async () => {
     let resolveTranscription
     const transcriber = vi.fn().mockReturnValue(new Promise((resolve) => { resolveTranscription = resolve }))

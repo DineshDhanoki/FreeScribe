@@ -127,17 +127,21 @@ async function detectLanguage(audio, requestId) {
     const predictions = await classifier(sample, { top_k: 5 })
     if (!isActive(requestId)) return null
 
-    const candidates = Array.isArray(predictions) ? predictions : [predictions]
-    const match = candidates
+    const candidates = (Array.isArray(predictions) ? predictions : [predictions])
         .map((prediction) => ({
-            language: getTranscriptionLanguageByDetectionLabel(prediction?.label),
+            label: prediction?.label,
             confidence: Number(prediction?.score),
         }))
-        .filter((prediction) => prediction.language && Number.isFinite(prediction.confidence))
-        .sort((left, right) => right.confidence - left.confidence)[0]
+        .filter((prediction) => Number.isFinite(prediction.confidence))
+        .sort((left, right) => right.confidence - left.confidence)
+    const winner = candidates[0]
+    const match = winner && {
+        language: getTranscriptionLanguageByDetectionLabel(winner.label),
+        confidence: winner.confidence,
+    }
 
-    if (!match) {
-        throw new Error('Automatic language detection could not identify a supported language. Please select it manually.')
+    if (!match?.language) {
+        throw new Error('The most likely spoken language is not supported by automatic mode. Please select the spoken language manually.')
     }
 
     self.postMessage({
