@@ -93,8 +93,6 @@ async function transcribe(audio, model, language, requestId) {
             chunk_length_s: 30,
             stride_length_s: 5,
             return_timestamps: true,
-            no_repeat_ngram_size: 3,
-            repetition_penalty: 1.1,
         }
 
         // English-only Whisper checkpoints reject language/task generation options.
