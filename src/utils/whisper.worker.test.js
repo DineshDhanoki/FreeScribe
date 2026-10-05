@@ -83,6 +83,39 @@ describe('Whisper worker integration', () => {
     })
   })
 
+  it('detects a supported language before transcribing in auto mode', async () => {
+    const classifier = vi.fn().mockResolvedValue([
+      { label: 'ben', score: 0.94 },
+      { label: 'hin', score: 0.03 },
+    ])
+    const transcriber = vi.fn().mockResolvedValue({ chunks: [{ text: 'আমি ভালো আছি', timestamp: [0, 1] }] })
+    const pipeline = vi.fn()
+      .mockImplementationOnce(() => Promise.resolve(transcriber))
+      .mockImplementationOnce(() => Promise.resolve(classifier))
+    vi.doMock('@huggingface/transformers', () => ({ pipeline }))
+    await import('./whisper.worker.js')
+
+    await messageHandler({
+      data: {
+        type: MessageTypes.INFERENCE_REQUEST,
+        audio: new Float32Array(16000),
+        model_name: 'Xenova/whisper-tiny',
+      },
+    })
+
+    expect(pipeline).toHaveBeenNthCalledWith(2, 'audio-classification', 'Xenova/mms-lid-256', {
+      progress_callback: expect.any(Function),
+      revision: '74c747185d407ca911d346a892241c95131d6fa3',
+    })
+    expect(classifier).toHaveBeenCalledWith(expect.any(Float32Array), { top_k: 5 })
+    expect(postedMessages).toContainEqual({
+      type: WorkerMessageType.LANGUAGE_DETECTED,
+      languageId: 'bn',
+      confidence: 0.94,
+    })
+    expect(transcriber).toHaveBeenCalledWith(expect.any(Float32Array), expect.objectContaining({ language: 'bengali', task: 'transcribe' }))
+  })
+
   it('does not publish a result after cancellation', async () => {
     let resolveTranscription
     const transcriber = vi.fn().mockReturnValue(new Promise((resolve) => { resolveTranscription = resolve }))

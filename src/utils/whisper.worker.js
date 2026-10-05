@@ -3,7 +3,14 @@ import { MessageTypes } from './presets'
 import { isTranscriptionRequest, WorkerMessageType } from '../services/workers/protocol'
 import { createRequestGate } from '../services/workers/requestGate'
 import { normalizeWhisperOutput } from '../services/transcription/whisperOutput'
-import { DEFAULT_SPEECH_MODEL, getSpeechModel, isSupportedSpeechModel, isSupportedWhisperLanguage } from '../services/models/modelConfig'
+import {
+    DEFAULT_SPEECH_MODEL,
+    getSpeechModel,
+    getTranscriptionLanguageByLid,
+    isSupportedSpeechModel,
+    isSupportedWhisperLanguage,
+    LANGUAGE_DETECTION_MODEL,
+} from '../services/models/modelConfig'
 
 class TranscriptionPipeline {
     static task = 'automatic-speech-recognition'
@@ -20,6 +27,23 @@ class TranscriptionPipeline {
             this.instances.set(cacheKey, instance)
         }
         return this.instances.get(cacheKey)
+    }
+}
+
+class LanguageDetectionPipeline {
+    static instance = null
+
+    static async getInstance(progressCallback = null) {
+        if (this.instance === null) {
+            this.instance = pipeline(LANGUAGE_DETECTION_MODEL.task, LANGUAGE_DETECTION_MODEL.id, {
+                progress_callback: progressCallback,
+                revision: LANGUAGE_DETECTION_MODEL.revision,
+            }).catch((error) => {
+                this.instance = null
+                throw error
+            })
+        }
+        return this.instance
     }
 }
 
@@ -56,6 +80,13 @@ async function transcribe(audio, model, language, requestId) {
         const transcriber = await TranscriptionPipeline.getInstance(model.id, model.revision, loadModelCallback)
         if (!isActive(requestId)) return
         sendLoadingMessage('ready', requestId)
+
+        let detectedLanguage = language
+        if (model.supportsMultilingual && !detectedLanguage) {
+            detectedLanguage = await detectLanguage(audio, requestId)
+            if (!isActive(requestId)) return
+        }
+
         self.postMessage({ type: WorkerMessageType.INFERENCE_PROGRESS, phase: 'transcribing' })
 
         const generationOptions = {
@@ -67,7 +98,7 @@ async function transcribe(audio, model, language, requestId) {
         // English-only Whisper checkpoints reject language/task generation options.
         // Multilingual checkpoints require them to select the intended decoding mode.
         if (model.supportsMultilingual) {
-            generationOptions.language = language
+            generationOptions.language = detectedLanguage
             generationOptions.task = 'transcribe'
         }
 
@@ -83,6 +114,38 @@ async function transcribe(audio, model, language, requestId) {
             self.postMessage({ type: WorkerMessageType.ERROR, message: error.message || 'Transcription failed.' })
         }
     }
+}
+
+async function detectLanguage(audio, requestId) {
+    self.postMessage({ type: WorkerMessageType.INFERENCE_PROGRESS, phase: 'detecting' })
+    const classifier = await LanguageDetectionPipeline.getInstance(loadModelCallback)
+    if (!isActive(requestId)) return null
+
+    // A short leading window keeps detection responsive while retaining enough
+    // speech for the classifier to distinguish closely related languages.
+    const sample = audio.slice(0, Math.min(audio.length, 15 * 16000))
+    const predictions = await classifier(sample, { top_k: 5 })
+    if (!isActive(requestId)) return null
+
+    const candidates = Array.isArray(predictions) ? predictions : [predictions]
+    const match = candidates
+        .map((prediction) => ({
+            language: getTranscriptionLanguageByLid(String(prediction?.label || '').replace(/^__label__/, '').replace(/^__|__$/g, '')),
+            confidence: Number(prediction?.score),
+        }))
+        .filter((prediction) => prediction.language && Number.isFinite(prediction.confidence))
+        .sort((left, right) => right.confidence - left.confidence)[0]
+
+    if (!match) {
+        throw new Error('Automatic language detection could not identify a supported language. Please select it manually.')
+    }
+
+    self.postMessage({
+        type: WorkerMessageType.LANGUAGE_DETECTED,
+        languageId: match.language.id,
+        confidence: match.confidence,
+    })
+    return match.language.whisper
 }
 
 function isActive(requestId) {

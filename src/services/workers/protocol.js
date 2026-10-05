@@ -5,6 +5,7 @@ export const WorkerMessageType = Object.freeze({
   INFERENCE_REQUEST: 'INFERENCE_REQUEST',
   INFERENCE_DONE: 'INFERENCE_DONE',
   INFERENCE_PROGRESS: 'INFERENCE_PROGRESS',
+  LANGUAGE_DETECTED: 'LANGUAGE_DETECTED',
   ERROR: 'ERROR',
   CANCEL: 'CANCEL',
 })
@@ -29,7 +30,8 @@ export function isTranscriptionWorkerMessage(message) {
   if (message.type === WorkerMessageType.RESULT && !Array.isArray(message.results)) return false
   if (message.type === WorkerMessageType.ERROR && typeof message.message !== 'string') return false
   if (message.type === WorkerMessageType.DOWNLOADING && (!Number.isFinite(message.progress) || message.progress < 0 || message.progress > 100)) return false
-  if (message.type === WorkerMessageType.INFERENCE_PROGRESS && message.phase !== 'transcribing') return false
+  if (message.type === WorkerMessageType.INFERENCE_PROGRESS && !['detecting', 'transcribing'].includes(message.phase)) return false
+  if (message.type === WorkerMessageType.LANGUAGE_DETECTED && (typeof message.languageId !== 'string' || !Number.isFinite(message.confidence))) return false
   return true
 }
 

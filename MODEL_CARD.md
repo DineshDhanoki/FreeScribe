@@ -2,9 +2,10 @@
 
 ## Speech recognition
 
-- Default model ID: `Xenova/whisper-tiny.en`
+- Default model ID: `Xenova/whisper-tiny`
 - Task: automatic speech recognition
-- Current scope: explicit language selection for English, Spanish, French, German, Hindi, Japanese, Portuguese, and Chinese when using a multilingual model.
+- Current scope: automatic or explicit language selection for the supported Indian/South Asian and global language registry.
+- Language identification model: `Xenova/mms-lid-256`, used only for Auto-detect mode on the first 15 seconds of audio.
 - Runtime: `@huggingface/transformers` in a Web Worker
 - Input preprocessing: channel mixing to mono and explicit resampling to 16 kHz.
 - Model revisions are pinned in `src/services/models/modelConfig.js`; update them deliberately and rerun evaluation before release.

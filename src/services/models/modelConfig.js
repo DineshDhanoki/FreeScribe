@@ -45,47 +45,55 @@ export const TRANSLATION_MODEL = Object.freeze({
   license: 'cc-by-nc-4.0',
 })
 
+export const LANGUAGE_DETECTION_MODEL = Object.freeze({
+  id: 'Xenova/mms-lid-256',
+  revision: '74c747185d407ca911d346a892241c95131d6fa3',
+  task: 'audio-classification',
+  license: 'cc-by-4.0',
+})
+
 export const TRANSCRIPTION_LANGUAGES = Object.freeze([
-  { id: 'en', label: 'English', whisper: 'english', nllb: 'eng_Latn' },
-  { id: 'hi', label: 'Hindi', whisper: 'hindi', nllb: 'hin_Deva' },
-  { id: 'bn', label: 'Bengali', whisper: 'bengali', nllb: 'ben_Beng' },
-  { id: 'mr', label: 'Marathi', whisper: 'marathi', nllb: 'mar_Deva' },
-  { id: 'te', label: 'Telugu', whisper: 'telugu', nllb: 'tel_Telu' },
-  { id: 'ta', label: 'Tamil', whisper: 'tamil', nllb: 'tam_Taml' },
-  { id: 'gu', label: 'Gujarati', whisper: 'gujarati', nllb: 'guj_Gujr' },
-  { id: 'ur', label: 'Urdu', whisper: 'urdu', nllb: 'urd_Arab' },
-  { id: 'kn', label: 'Kannada', whisper: 'kannada', nllb: 'kan_Knda' },
-  { id: 'ml', label: 'Malayalam', whisper: 'malayalam', nllb: 'mal_Mlym' },
-  { id: 'pa', label: 'Punjabi', whisper: 'punjabi', nllb: 'pan_Guru' },
-  { id: 'or', label: 'Odia', whisper: 'odia', nllb: 'ory_Orya' },
-  { id: 'as', label: 'Assamese', whisper: 'assamese', nllb: 'asm_Beng' },
-  { id: 'ne', label: 'Nepali', whisper: 'nepali', nllb: 'npi_Deva' },
-  { id: 'sa', label: 'Sanskrit', whisper: 'sanskrit', nllb: 'san_Deva' },
-  { id: 'es', label: 'Spanish', whisper: 'spanish', nllb: 'spa_Latn' },
-  { id: 'fr', label: 'French', whisper: 'french', nllb: 'fra_Latn' },
-  { id: 'de', label: 'German', whisper: 'german', nllb: 'deu_Latn' },
-  { id: 'it', label: 'Italian', whisper: 'italian', nllb: 'ita_Latn' },
-  { id: 'pt', label: 'Portuguese', whisper: 'portuguese', nllb: 'por_Latn' },
-  { id: 'ru', label: 'Russian', whisper: 'russian', nllb: 'rus_Cyrl' },
-  { id: 'ar', label: 'Arabic', whisper: 'arabic', nllb: 'arb_Arab' },
-  { id: 'ja', label: 'Japanese', whisper: 'japanese', nllb: 'jpn_Jpan' },
-  { id: 'ko', label: 'Korean', whisper: 'korean', nllb: 'kor_Hang' },
-  { id: 'zh', label: 'Chinese', whisper: 'chinese', nllb: 'zho_Hans' },
-  { id: 'id', label: 'Indonesian', whisper: 'indonesian', nllb: 'ind_Latn' },
-  { id: 'tr', label: 'Turkish', whisper: 'turkish', nllb: 'tur_Latn' },
-  { id: 'vi', label: 'Vietnamese', whisper: 'vietnamese', nllb: 'vie_Latn' },
-  { id: 'th', label: 'Thai', whisper: 'thai', nllb: 'tha_Thai' },
-  { id: 'nl', label: 'Dutch', whisper: 'dutch', nllb: 'nld_Latn' },
-  { id: 'pl', label: 'Polish', whisper: 'polish', nllb: 'pol_Latn' },
-  { id: 'uk', label: 'Ukrainian', whisper: 'ukrainian', nllb: 'ukr_Cyrl' },
-  { id: 'sw', label: 'Swahili', whisper: 'swahili', nllb: 'swh_Latn' },
+  { id: 'auto', label: 'Auto-detect language', whisper: null, nllb: null, isAuto: true },
+  { id: 'en', label: 'English', whisper: 'english', nllb: 'eng_Latn', lid: 'eng' },
+  { id: 'hi', label: 'Hindi', whisper: 'hindi', nllb: 'hin_Deva', lid: 'hin' },
+  { id: 'bn', label: 'Bengali', whisper: 'bengali', nllb: 'ben_Beng', lid: 'ben' },
+  { id: 'mr', label: 'Marathi', whisper: 'marathi', nllb: 'mar_Deva', lid: 'mar' },
+  { id: 'te', label: 'Telugu', whisper: 'telugu', nllb: 'tel_Telu', lid: 'tel' },
+  { id: 'ta', label: 'Tamil', whisper: 'tamil', nllb: 'tam_Taml', lid: 'tam' },
+  { id: 'gu', label: 'Gujarati', whisper: 'gujarati', nllb: 'guj_Gujr', lid: 'guj' },
+  { id: 'ur', label: 'Urdu', whisper: 'urdu', nllb: 'urd_Arab', lid: 'urd' },
+  { id: 'kn', label: 'Kannada', whisper: 'kannada', nllb: 'kan_Knda', lid: 'kan' },
+  { id: 'ml', label: 'Malayalam', whisper: 'malayalam', nllb: 'mal_Mlym', lid: 'mal' },
+  { id: 'pa', label: 'Punjabi', whisper: 'punjabi', nllb: 'pan_Guru', lid: 'pan' },
+  { id: 'or', label: 'Odia', whisper: 'odia', nllb: 'ory_Orya', lid: 'ory' },
+  { id: 'as', label: 'Assamese', whisper: 'assamese', nllb: 'asm_Beng', lid: 'asm' },
+  { id: 'ne', label: 'Nepali', whisper: 'nepali', nllb: 'npi_Deva', lid: 'npi' },
+  { id: 'sa', label: 'Sanskrit', whisper: 'sanskrit', nllb: 'san_Deva', lid: 'san' },
+  { id: 'es', label: 'Spanish', whisper: 'spanish', nllb: 'spa_Latn', lid: 'spa' },
+  { id: 'fr', label: 'French', whisper: 'french', nllb: 'fra_Latn', lid: 'fra' },
+  { id: 'de', label: 'German', whisper: 'german', nllb: 'deu_Latn', lid: 'deu' },
+  { id: 'it', label: 'Italian', whisper: 'italian', nllb: 'ita_Latn', lid: 'ita' },
+  { id: 'pt', label: 'Portuguese', whisper: 'portuguese', nllb: 'por_Latn', lid: 'por' },
+  { id: 'ru', label: 'Russian', whisper: 'russian', nllb: 'rus_Cyrl', lid: 'rus' },
+  { id: 'ar', label: 'Arabic', whisper: 'arabic', nllb: 'arb_Arab', lid: 'ara' },
+  { id: 'ja', label: 'Japanese', whisper: 'japanese', nllb: 'jpn_Jpan', lid: 'jpn' },
+  { id: 'ko', label: 'Korean', whisper: 'korean', nllb: 'kor_Hang', lid: 'kor' },
+  { id: 'zh', label: 'Chinese', whisper: 'chinese', nllb: 'zho_Hans', lid: 'cmn' },
+  { id: 'id', label: 'Indonesian', whisper: 'indonesian', nllb: 'ind_Latn', lid: 'ind' },
+  { id: 'tr', label: 'Turkish', whisper: 'turkish', nllb: 'tur_Latn', lid: 'tur' },
+  { id: 'vi', label: 'Vietnamese', whisper: 'vietnamese', nllb: 'vie_Latn', lid: 'vie' },
+  { id: 'th', label: 'Thai', whisper: 'thai', nllb: 'tha_Thai', lid: 'tha' },
+  { id: 'nl', label: 'Dutch', whisper: 'dutch', nllb: 'nld_Latn', lid: 'nld' },
+  { id: 'pl', label: 'Polish', whisper: 'polish', nllb: 'pol_Latn', lid: 'pol' },
+  { id: 'uk', label: 'Ukrainian', whisper: 'ukrainian', nllb: 'ukr_Cyrl', lid: 'ukr' },
+  { id: 'sw', label: 'Swahili', whisper: 'swahili', nllb: 'swh_Latn', lid: 'swh' },
 ])
 
 export const TRANSLATION_LANGUAGES = Object.freeze(
   Object.entries(LANGUAGES).map(([label, nllb]) => ({ id: nllb, label, nllb })),
 )
 
-export const DEFAULT_TRANSCRIPTION_LANGUAGE = 'en'
+export const DEFAULT_TRANSCRIPTION_LANGUAGE = 'auto'
 
 export function getSpeechModel(modelId) {
   return SPEECH_MODELS.find((model) => model.id === modelId) || SPEECH_MODELS[0]
@@ -96,7 +104,13 @@ export function isSupportedSpeechModel(modelId) {
 }
 
 export function getTranscriptionLanguage(languageId) {
-  return TRANSCRIPTION_LANGUAGES.find((language) => language.id === languageId) || TRANSCRIPTION_LANGUAGES[0]
+  return TRANSCRIPTION_LANGUAGES.find((language) => language.id === languageId)
+    || TRANSCRIPTION_LANGUAGES.find((language) => language.id === 'en')
+}
+
+export function getTranscriptionLanguageByLid(label) {
+  const normalizedLabel = String(label || '').trim().toLowerCase()
+  return TRANSCRIPTION_LANGUAGES.find((language) => language.lid === normalizedLabel) || null
 }
 
 export function getTranslationLanguage(languageId) {
@@ -104,6 +118,6 @@ export function getTranslationLanguage(languageId) {
 }
 
 export function isSupportedWhisperLanguage(language) {
-  return TRANSCRIPTION_LANGUAGES.some((item) => item.whisper === language)
+  return TRANSCRIPTION_LANGUAGES.some((item) => item.whisper && item.whisper === language)
 }
 import { LANGUAGES } from '../../utils/presets'

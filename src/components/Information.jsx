@@ -216,6 +216,7 @@ export default function Information(props) {
     return (
         <main className='flex-1  p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 max-w-prose w-full mx-auto'>
             <h1 className='font-semibold text-4xl sm:text-5xl md:text-6xl whitespace-nowrap'>Your <span className='text-blue-400 bold'>Transcription</span></h1>
+            {sourceLanguage?.label && sourceLanguage.id !== 'auto' && <p className='text-sm text-slate-500'>Detected language: {sourceLanguage.label}</p>}
             {metrics && <p className='text-xs text-slate-500'>Processed {metrics.audioDurationSeconds.toFixed(1)}s of audio in {(metrics.elapsedMs / 1000).toFixed(1)}s{typeof metrics.realTimeFactor === 'number' && ` · ${metrics.realTimeFactor.toFixed(2)}× real time`}{typeof metrics.memory?.deltaBytes === 'number' && ` · heap Δ ${(metrics.memory.deltaBytes / (1024 * 1024)).toFixed(1)} MB`}</p>}
 
             <div role='tablist' aria-label='Transcript views' className='grid grid-cols-2 sm:mx-auto bg-white  rounded overflow-hidden items-center p-1 blueShadow border-[2px] border-solid border-blue-300'>
@@ -274,6 +275,6 @@ Information.propTypes = {
     }),
     initialTranslation: PropTypes.string,
     initialTranslationLanguage: PropTypes.string,
-    sourceLanguage: PropTypes.shape({ id: PropTypes.string.isRequired, nllb: PropTypes.string.isRequired }).isRequired,
+    sourceLanguage: PropTypes.shape({ id: PropTypes.string.isRequired, label: PropTypes.string, nllb: PropTypes.string.isRequired }).isRequired,
     modelId: PropTypes.string.isRequired,
 }

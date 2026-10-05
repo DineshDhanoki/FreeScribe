@@ -15,6 +15,7 @@ describe('transcriptionReducer', () => {
       translationLanguageId: null,
       error: null,
       progress: null,
+      phase: null,
       metrics: null,
     })
   })

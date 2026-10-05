@@ -29,6 +29,7 @@ export function createInitialTranscriptionState() {
     translationLanguageId: null,
     error: null,
     progress: null,
+    phase: null,
     metrics: null,
   }
 }
@@ -47,9 +48,9 @@ export function transcriptionReducer(state, action) {
         error: null,
       }
     case TranscriptionAction.MODEL_READY:
-      return { ...state, status: TranscriptionStatus.TRANSCRIBING, error: null }
+      return { ...state, status: TranscriptionStatus.TRANSCRIBING, phase: null, error: null }
     case TranscriptionAction.INFERENCE_PROGRESS:
-      return { ...state, status: TranscriptionStatus.TRANSCRIBING, error: null }
+      return { ...state, status: TranscriptionStatus.TRANSCRIBING, phase: action.phase || 'transcribing', error: null }
     case TranscriptionAction.RESULT:
       return { ...state, output: action.output, status: TranscriptionStatus.TRANSCRIBING }
     case TranscriptionAction.COMPLETE:
