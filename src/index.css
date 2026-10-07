@@ -120,6 +120,8 @@ h1, h2, h3, .bold { letter-spacing: -0.035em; }
 .segment-editor { width: 100%; resize: vertical; border: 1px solid #dce4ef; border-radius: 13px; background: #fbfcfe; padding: 11px 13px; color: var(--ink); line-height: 1.55; outline: none; }
 .segment-editor:focus { border-color: #76a7ed; background: white; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.09); }
 .translation-copy { white-space: pre-wrap; color: #34445e; line-height: 1.8; text-align: left; }
+.translation-empty { display: grid; place-items: center; gap: 9px; min-height: 120px; border: 1px dashed #cad8eb; border-radius: 16px; background: #f8fafd; color: #7b8aa1; font-size: 0.86rem; }
+.translation-empty i { color: #6d8fe3; font-size: 1.4rem; }
 .translation-view { display: grid; gap: 22px; }
 .translation-controls { display: flex; align-items: end; gap: 12px; border-top: 1px solid var(--line); padding-top: 20px; }
 .translation-controls .btn-primary { min-height: 44px; }

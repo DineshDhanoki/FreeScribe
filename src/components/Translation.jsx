@@ -8,6 +8,12 @@ export default function Translation(props) {
             {(textElement && !translating) && (
                 <div className='translation-copy'>{textElement}</div>
             )}
+            {!textElement && !translating && !translationError && (
+                <div className='translation-empty'>
+                    <i className='fa-solid fa-language' aria-hidden='true'></i>
+                    <p>Select a target language to create a local translation.</p>
+                </div>
+            )}
             {translationError && <p role='alert' className='rounded-xl bg-rose-50 p-3 text-sm text-rose-600'>{translationError}</p>}
             {translating && <div className='translation-progress'>
                 <div className='mb-2 flex justify-between text-xs font-semibold text-slate-500'><span>Preparing translation model</span><span>{typeof translationProgress === 'number' ? `${Math.round(translationProgress)}%` : 'Starting…'}</span></div>
