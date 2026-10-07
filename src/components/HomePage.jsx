@@ -117,13 +117,13 @@ export default function HomePage(props) {
                 </button>
                 {recordingError && <p role='alert' className='rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-600'>{recordingError}</p>}
                 <div className='divider'>or</div>
-                <label className='upload-zone'>
+                <label className='upload-zone' htmlFor='audio-upload'>
                     <span className='upload-icon' aria-hidden='true'><i className='fa-solid fa-arrow-up-from-bracket'></i></span>
                     <span>
                         <span className='upload-title'>Upload an audio file</span>
                         <span className='upload-meta'>MP3, WAV, M4A, WebM and more</span>
                     </span>
-                    <input onChange={(event) => setFile(event.target.files?.[0] || null)} className='sr-only' type='file' accept='audio/*' />
+                    <input id='audio-upload' aria-label='Upload an audio file' onChange={(event) => setFile(event.target.files?.[0] || null)} className='sr-only' type='file' accept='audio/*' />
                 </label>
                 <p className='privacy-note'><i className='fa-solid fa-shield-halved text-emerald-500'></i><span>Audio stays on your device · </span><span>Recordings are limited to {Math.round(AUDIO_LIMITS.maxDurationSeconds / 60)} minutes and 200 MB.</span></p>
             </section>
