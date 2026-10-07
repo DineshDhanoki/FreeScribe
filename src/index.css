@@ -34,6 +34,8 @@ h1, h2, h3, .bold { letter-spacing: -0.035em; }
 }
 
 .app-shell { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.skip-link { position: fixed; top: 10px; left: 10px; z-index: 100; transform: translateY(-160%); border-radius: 10px; padding: 10px 14px; color: white; background: var(--ink); font-size: 0.8rem; font-weight: 800; transition: transform 160ms ease; }
+.skip-link:focus { transform: translateY(0); }
 .app-header { position: relative; z-index: 20; display: flex; align-items: center; justify-content: space-between; min-height: 76px; border-bottom: 1px solid rgba(223, 230, 241, 0.8); }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; }
 .brand-mark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 12px; color: white; background: linear-gradient(135deg, var(--blue), var(--indigo)); box-shadow: 0 10px 24px rgba(59, 130, 246, 0.25); }

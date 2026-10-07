@@ -197,7 +197,8 @@ function App() {
 
   return (
     <div className='app-shell'>
-      <section className='min-h-screen flex flex-col'>
+      <a className='skip-link' href='#main-content'>Skip to main content</a>
+      <section id='main-content' className='min-h-screen flex flex-col' tabIndex='-1'>
         <Header onSelectProject={handleSelectProject} onNewProject={handleAudioReset} />
         {transcription.status === TranscriptionStatus.ERROR ? (
           <main className='workspace-wrap'>
