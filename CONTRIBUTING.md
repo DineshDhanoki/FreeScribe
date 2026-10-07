@@ -29,6 +29,10 @@ npm run test:e2e
 
 Explain the user problem, the design choice, and how the change was verified. Changes to model behavior should include benchmark evidence or clearly document why an evaluation fixture is not yet available.
 
+UI changes should preserve keyboard navigation, visible focus states, readable
+contrast, responsive layouts, and accessible names for controls. Check the
+home, upload, transcription, and translation flows at desktop and mobile widths.
+
 Never commit private recordings, personal information, generated model files, or secrets.
 
 ## Open-source collaboration
