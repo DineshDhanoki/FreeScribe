@@ -46,4 +46,9 @@ describe('HomePage recording flow', () => {
     render(<HomePage setAudioStream={vi.fn()} setFile={vi.fn()} />)
     expect(screen.getByText('Recordings are limited to 30 minutes and 200 MB.')).toBeInTheDocument()
   })
+
+  it('exposes an accessible audio upload control', () => {
+    render(<HomePage setAudioStream={vi.fn()} setFile={vi.fn()} />)
+    expect(screen.getByLabelText('Upload an audio file')).toHaveAttribute('accept', 'audio/*')
+  })
 })
