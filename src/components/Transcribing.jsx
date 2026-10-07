@@ -12,7 +12,7 @@ export default function Transcribing(props) {
 
 
     return (
-        <main role='status' aria-live='polite' className='workspace-wrap'>
+        <main role='status' aria-live='polite' aria-busy='true' className='workspace-wrap'>
           <section className='status-card'>
             <span className='status-icon' aria-hidden='true'><i className='fa-solid fa-wave-square'></i></span>
             <h1 className='status-title'>Working on it</h1>
