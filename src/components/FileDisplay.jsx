@@ -40,7 +40,7 @@ export default function FileDisplay(props) {
                 </span>
             </div>
             <div className='mb-3 rounded-2xl border border-slate-200 bg-slate-50 p-3'>
-                <audio ref={audioRef} className='w-full' controls preload='metadata'>
+                <audio ref={audioRef} aria-label='Selected audio preview' className='w-full' controls preload='metadata'>
                     Your browser does not support the audio element.
                 </audio>
             </div>
