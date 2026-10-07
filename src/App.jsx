@@ -202,7 +202,7 @@ function App() {
         <Header onSelectProject={handleSelectProject} onNewProject={handleAudioReset} />
         {transcription.status === TranscriptionStatus.ERROR ? (
           <main className='workspace-wrap'>
-            <div className='error-card'>
+            <div className='error-card' role='alert'>
             <span className='error-icon' aria-hidden='true'><i className='fa-solid fa-triangle-exclamation'></i></span>
             <h1 className='text-3xl font-extrabold text-slate-800'>Something went wrong</h1>
             <p className='mx-auto mt-3 max-w-md leading-7 text-slate-500'>{transcription.error}</p>
