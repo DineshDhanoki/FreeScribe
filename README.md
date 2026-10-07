@@ -26,6 +26,13 @@ Evaluation commands also accept `--output evaluation/results/report.json` to sav
 
 The first transcription or translation downloads model files and may require significant memory and bandwidth.
 
+## Troubleshooting first use
+
+- Keep the tab open while the model downloads; later runs reuse the browser cache.
+- Use `Xenova/whisper-base` for better multilingual accuracy and `Xenova/whisper-tiny` when speed matters more.
+- If automatic language detection is uncertain, select the spoken language manually before retrying.
+- For a clean reset, open **Projects** and choose **Clear downloaded model files**, then reload the page.
+
 ## Documentation
 
 - [Architecture](ARCHITECTURE.md)
