@@ -27,42 +27,51 @@ export default function FileDisplay(props) {
 
 
     return (
-        <main className='flex-1  p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 w-full max-w-prose mx-auto'>
-            <h1 className='font-semibold text-4xl sm:text-5xl md:text-6xl'>Your <span className='text-blue-400 bold'>File</span></h1>
-            <div className=' flex flex-col text-left my-4'>
-                <h3 className='font-semibold'>Name</h3>
-                <p className='truncate'>{file ? file?.name : 'Custom audio'}</p>
+        <main className='workspace-wrap'>
+          <section className='workspace-card text-center'>
+            <p className='eyebrow justify-center'><span className='eyebrow-dot'></span>Ready to process</p>
+            <h1 className='workspace-title mt-3'>Review your <span>audio</span></h1>
+            <p className='mt-3 text-sm leading-6 text-slate-500'>Listen once, then choose the model and spoken language that best match your recording.</p>
+            <div className='file-summary'>
+                <span className='file-icon' aria-hidden='true'><i className='fa-solid fa-file-audio'></i></span>
+                <span className='min-w-0'>
+                    <span className='block text-xs font-bold uppercase tracking-wider text-slate-400'>Audio file</span>
+                    <span className='block truncate font-semibold text-slate-700'>{file ? file?.name : 'Microphone recording'}</span>
+                </span>
             </div>
-            <div className='flex flex-col mb-2'>
-                <audio ref={audioRef} className='w-full' controls>
+            <div className='mb-3 rounded-2xl border border-slate-200 bg-slate-50 p-3'>
+                <audio ref={audioRef} className='w-full' controls preload='metadata'>
                     Your browser does not support the audio element.
                 </audio>
             </div>
-            <label className='flex flex-col gap-1 text-left'>
-                <span className='text-xs font-medium text-slate-500'>Transcription model</span>
-                <select aria-label='Transcription model' value={modelId} onChange={handleModelChange} className='rounded border border-slate-200 bg-white p-2'>
+            <div className='form-grid'>
+            <label className='text-left'>
+                <span className='field-label'>Transcription model</span>
+                <select aria-label='Transcription model' value={modelId} onChange={handleModelChange} className='form-control'>
                     {SPEECH_MODELS.map((model) => (
                         <option key={model.id} value={model.id}>{model.label} — {model.approximateSize}{model.recommended ? ' — recommended' : ''}</option>
                     ))}
                 </select>
-                <span className='text-xs text-slate-500'>{selectedModel.description}</span>
+                <span className='field-help'>{selectedModel.description}</span>
             </label>
-            <label className='flex flex-col gap-1 text-left'>
-                <span className='text-xs font-medium text-slate-500'>Spoken language</span>
-                <select aria-label='Spoken language' value={languageId} onChange={(event) => setLanguageId(event.target.value)} className='rounded border border-slate-200 bg-white p-2'>
+            <label className='text-left'>
+                <span className='field-label'>Spoken language</span>
+                <select aria-label='Spoken language' value={languageId} onChange={(event) => setLanguageId(event.target.value)} className='form-control'>
                     {TRANSCRIPTION_LANGUAGES.map((language) => (
                         <option key={language.id} value={language.id} disabled={!selectedModel.supportsMultilingual && language.id !== 'en'}>{language.label}{!selectedModel.supportsMultilingual && language.id !== 'en' ? ' — choose a multilingual model' : ''}</option>
                     ))}
                 </select>
-                <span className='text-xs text-slate-500'>Auto-detect uses a local speech-language model and then starts transcription.</span>
+                <span className='field-help'>Auto-detect identifies the spoken language locally before transcription begins.</span>
             </label>
-            <div className='flex items-center justify-between gap-4'>
-                <button onClick={handleAudioReset} className='text-slate-400 hover:text-blue-600 duration-200'>Reset</button>
-                <button onClick={handleFormSubmission} className='specialBtn  px-3 p-2 rounded-lg text-blue-400 flex items-center gap-2 font-medium '>
-                    <p>Transcribe</p>
-                    <i className="fa-solid fa-pen-nib"></i>
+            </div>
+            <div className='workspace-actions'>
+                <button onClick={handleAudioReset} className='btn-ghost'><i className='fa-solid fa-arrow-left'></i>Choose another file</button>
+                <button onClick={handleFormSubmission} className='btn-primary'>
+                    <span>Transcribe audio</span>
+                    <i className='fa-solid fa-arrow-right'></i>
                 </button>
             </div>
+          </section>
         </main>
     )
 }

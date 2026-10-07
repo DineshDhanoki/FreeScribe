@@ -215,34 +215,41 @@ export default function Information(props) {
 
 
     return (
-        <main className='flex-1  p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 max-w-prose w-full mx-auto'>
-            <h1 className='font-semibold text-4xl sm:text-5xl md:text-6xl whitespace-nowrap'>Your <span className='text-blue-400 bold'>Transcription</span></h1>
+        <main className='result-layout'>
+          <header className='result-header'>
+            <p className='eyebrow'><span className='eyebrow-dot'></span>Ready to review</p>
+            <h1 className='result-title mt-3'>Your <span>transcription</span></h1>
             {sourceLanguage?.label && sourceLanguage.id !== 'auto' && (
-                <div role='status' className='mx-auto rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-slate-700'>
+                <div role='status' className='language-badge'>
+                    <i className='fa-solid fa-language text-blue-500' aria-hidden='true'></i>
                     You spoke: <span className='text-blue-600'>{sourceLanguage.label}</span>
                     {languageWasDetected && typeof languageConfidence === 'number' && ` · ${Math.round(languageConfidence * 100)}% confidence`}
                     {!languageWasDetected && <span className='font-normal text-slate-500'> · selected manually</span>}
                 </div>
             )}
             {languageWasDetected && typeof languageConfidence === 'number' && languageConfidence < 0.6 && (
-                <p role='alert' className='text-sm font-medium text-amber-700'>Low-confidence language guess. Select the spoken language manually and try again if the transcript looks wrong.</p>
+                <p role='alert' className='notice mx-auto mt-4 max-w-2xl'>Low-confidence language guess. Select the spoken language manually and try again if the transcript looks wrong.</p>
             )}
             {modelId === 'Xenova/whisper-tiny' && sourceLanguage?.id !== 'en' && (
-                <p className='text-xs text-slate-500'>For better non-English accuracy, choose Whisper Base Multilingual before transcribing.</p>
+                <p className='mt-3 text-xs text-slate-500'>For better non-English accuracy, choose Whisper Base Multilingual before transcribing.</p>
             )}
             {transcriptLooksUnreliable && (
-                <p role='alert' className='rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800'>This transcript contains suspicious repetition and may be a model hallucination. Retry with Whisper Base Multilingual and confirm the spoken language.</p>
+                <p role='alert' className='notice mx-auto mt-4 max-w-2xl'>This transcript contains suspicious repetition and may be a model hallucination. Retry with Whisper Base Multilingual and confirm the spoken language.</p>
             )}
-            {metrics && <p className='text-xs text-slate-500'>Processed {metrics.audioDurationSeconds.toFixed(1)}s of audio in {(metrics.elapsedMs / 1000).toFixed(1)}s{typeof metrics.realTimeFactor === 'number' && ` · ${metrics.realTimeFactor.toFixed(2)}× real time`}{typeof metrics.memory?.deltaBytes === 'number' && ` · heap Δ ${(metrics.memory.deltaBytes / (1024 * 1024)).toFixed(1)} MB`}</p>}
+            {metrics && <p className='mt-3 text-xs text-slate-500'>Processed {metrics.audioDurationSeconds.toFixed(1)}s of audio in {(metrics.elapsedMs / 1000).toFixed(1)}s{typeof metrics.realTimeFactor === 'number' && ` · ${metrics.realTimeFactor.toFixed(2)}× real time`}{typeof metrics.memory?.deltaBytes === 'number' && ` · heap Δ ${(metrics.memory.deltaBytes / (1024 * 1024)).toFixed(1)} MB`}</p>}
+          </header>
 
-            <div role='tablist' aria-label='Transcript views' className='grid grid-cols-2 sm:mx-auto bg-white  rounded overflow-hidden items-center p-1 blueShadow border-[2px] border-solid border-blue-300'>
-                <button id='transcription-tab' role='tab' tabIndex={tab === 'transcription' ? 0 : -1} aria-selected={tab === 'transcription'} aria-controls='transcription-panel' onKeyDown={(event) => handleTabKeyDown(event, 'transcription')} onClick={() => setTab('transcription')} className={'px-4 rounded duration-200 py-1 ' + (tab === 'transcription' ? ' bg-blue-300 text-white' : ' text-blue-400 hover:text-blue-600')}>Transcription</button>
-                <button id='translation-tab' role='tab' tabIndex={tab === 'translation' ? 0 : -1} aria-selected={tab === 'translation'} aria-controls='translation-panel' onKeyDown={(event) => handleTabKeyDown(event, 'translation')} onClick={() => setTab('translation')} className={'px-4 rounded duration-200 py-1  ' + (tab === 'translation' ? ' bg-blue-300 text-white' : ' text-blue-400 hover:text-blue-600')}>Translation</button>
+          <section className='result-card'>
+            <div className='text-center'>
+              <div role='tablist' aria-label='Transcript views' className='tab-list'>
+                <button id='transcription-tab' role='tab' tabIndex={tab === 'transcription' ? 0 : -1} aria-selected={tab === 'transcription'} aria-controls='transcription-panel' onKeyDown={(event) => handleTabKeyDown(event, 'transcription')} onClick={() => setTab('transcription')} className='tab-button'>Transcription</button>
+                <button id='translation-tab' role='tab' tabIndex={tab === 'translation' ? 0 : -1} aria-selected={tab === 'translation'} aria-controls='translation-panel' onKeyDown={(event) => handleTabKeyDown(event, 'translation')} onClick={() => setTab('translation')} className='tab-button'>Translation</button>
+              </div>
             </div>
-            <div id={tab === 'transcription' ? 'transcription-panel' : 'translation-panel'} role='tabpanel' aria-labelledby={tab === 'transcription' ? 'transcription-tab' : 'translation-tab'} tabIndex='0' className='my-8 flex flex-col-reverse max-w-prose w-full mx-auto gap-4'>
+            <div id={tab === 'transcription' ? 'transcription-panel' : 'translation-panel'} role='tabpanel' aria-labelledby={tab === 'transcription' ? 'transcription-tab' : 'translation-tab'} tabIndex='0' className='result-panel'>
                 {(!finished || translating) && (
-                    <div className='grid place-items-center'>
-                        <i className="fa-solid fa-spinner animate-spin"></i>
+                    <div className='mb-4 grid place-items-center text-blue-500'>
+                        <i className='fa-solid fa-spinner animate-spin'></i>
                     </div>
                 )}
                 {tab === 'transcription' ? (
@@ -251,31 +258,35 @@ export default function Information(props) {
                     <Translation {...props} toLanguage={toLanguage} translating={translating} translationProgress={translationProgress} translationError={translationError} textElement={textElement} setTranslating={setTranslating} setTranslation={setTranslation} setToLanguage={setToLanguage} generateTranslation={generateTranslation} cancelTranslation={cancelTranslation} />
                 )}
             </div>
-            <div className='flex items-center gap-4 mx-auto '>
-                <button onClick={handleSaveProject} disabled={saveState === 'saving'} className='specialBtn rounded-lg px-3 py-2 text-sm text-blue-400 disabled:opacity-50'>
+            <div className='action-bar'>
+                <button onClick={handleSaveProject} disabled={saveState === 'saving'} className='btn-secondary'>
+                    <i className='fa-regular fa-floppy-disk' aria-hidden='true'></i>
                     {saveState === 'saving' ? 'Saving…' : saveState === 'saved' ? 'Saved locally' : 'Save locally'}
                 </button>
-                <select id='transcript-format' aria-label='Export format' className='rounded bg-white px-2 py-1 text-sm text-slate-600'>
+                <select id='transcript-format' aria-label='Export format' className='form-control export-select'>
                     <option value='txt'>TXT</option>
                     <option value='json'>JSON</option>
                     <option value='srt'>SRT</option>
                     <option value='vtt'>VTT</option>
                 </select>
-                <button onClick={handleCopy} aria-label='Copy transcript' title="Copy" className='bg-white  hover:text-blue-500 duration-200 text-blue-300 px-2 aspect-square grid place-items-center rounded'>
+                <button onClick={handleCopy} aria-label='Copy transcript' title='Copy' className='icon-button'>
                     <i className="fa-solid fa-copy"></i>
                 </button>
-                <button onClick={handleDownload} aria-label='Download transcript' title="Download" className='bg-white  hover:text-blue-500 duration-200 text-blue-300 px-2 aspect-square grid place-items-center rounded'>
+                <button onClick={handleDownload} aria-label='Download transcript' title='Download' className='icon-button'>
                     <i className="fa-solid fa-download"></i>
                 </button>
-                {metrics && <button onClick={handleBenchmarkExport} aria-label='Export benchmark run' title="Export benchmark run" className='bg-white hover:text-blue-500 duration-200 text-blue-300 px-2 aspect-square grid place-items-center rounded'>
+                {metrics && <button onClick={handleBenchmarkExport} aria-label='Export benchmark run' title='Export benchmark run' className='icon-button'>
                     <i className="fa-solid fa-chart-line"></i>
                 </button>}
             </div>
-            {saveState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not save this project locally.</p>}
-            {copyState === 'copied' && <p role='status' className='text-sm text-emerald-600'>Transcript copied.</p>}
-            {copyState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not copy the transcript.</p>}
-            {benchmarkExportState === 'exported' && <p role='status' className='text-sm text-emerald-600'>Benchmark run exported. It contains metrics only.</p>}
-            {benchmarkExportState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not export benchmark metrics.</p>}
+            <div className='mt-3 text-center'>
+              {saveState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not save this project locally.</p>}
+              {copyState === 'copied' && <p role='status' className='text-sm text-emerald-600'>Transcript copied.</p>}
+              {copyState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not copy the transcript.</p>}
+              {benchmarkExportState === 'exported' && <p role='status' className='text-sm text-emerald-600'>Benchmark run exported. It contains metrics only.</p>}
+              {benchmarkExportState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not export benchmark metrics.</p>}
+            </div>
+          </section>
         </main>
     )
 }

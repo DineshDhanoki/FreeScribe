@@ -2,10 +2,10 @@ import PropTypes from 'prop-types'
 
 export default function Transcription({ segments, onSegmentChange }) {
     return (
-        <div className='flex flex-col gap-3 text-left'>
+        <div className='segment-list text-left'>
             {segments.map((segment, index) => (
-                <label key={`${segment.index}-${index}`} className='flex gap-3 items-start'>
-                    <span className='text-xs text-slate-400 min-w-20 pt-2'>
+                <label key={`${segment.index}-${index}`} className='segment-row'>
+                    <span className='segment-time'>
                         {segment.start.toFixed(1)}s
                     </span>
                     <textarea
@@ -13,7 +13,7 @@ export default function Transcription({ segments, onSegmentChange }) {
                         value={segment.text}
                         onChange={(event) => onSegmentChange(index, event.target.value)}
                         rows={Math.max(1, Math.ceil(segment.text.length / 70))}
-                        className='flex-1 resize-y rounded border border-slate-200 bg-white p-2 outline-none focus:border-blue-300'
+                        className='segment-editor'
                     />
                 </label>
             ))}

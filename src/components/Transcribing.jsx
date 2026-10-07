@@ -12,22 +12,25 @@ export default function Transcribing(props) {
 
 
     return (
-        <div role='status' aria-live='polite' className='flex items-center flex-1 flex-col justify-center gap-10 md:gap-14 text-center pb-24 p-4'>
-            <div className='flex flex-col gap-2 sm:gap-4'>
-
-                <h1 className='font-semibold text-4xl sm:text-5xl md:text-6xl'><span className='text-blue-400 bold'>Transcribing</span></h1>
-                <p>{phaseLabel}</p>
-                {typeof progress === 'number' && <div role='progressbar' aria-label='Model download progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(progress)} className='text-sm text-slate-500'>{Math.round(progress)}%</div>}
-            </div>
-            <div className='flex flex-col gap-2 sm:gap-3 max-w-[400px] mx-auto w-full'>
+        <main role='status' aria-live='polite' className='workspace-wrap'>
+          <section className='status-card'>
+            <span className='status-icon' aria-hidden='true'><i className='fa-solid fa-wave-square'></i></span>
+            <h1 className='status-title'>Working on it</h1>
+            <p className='status-subtitle'>{phaseLabel}</p>
+            {typeof progress === 'number' && <div className='mt-7'>
+                <div className='mb-2 flex justify-between text-xs font-semibold text-slate-500'><span>Model download</span><span>{Math.round(progress)}%</span></div>
+                <div role='progressbar' aria-label='Model download progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(progress)} className='progress-track'><div className='progress-fill' style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}></div></div>
+            </div>}
+            <div className='processing-lines'>
                 {[0, 1, 2].map(val => {
                     return (
-                        <div key={val} className={'rounded-full h-2 sm:h-3 bg-slate-400 loading ' + `loading${val}`}></div>
+                        <div key={val} className={'rounded-full h-2 loading ' + `loading${val}`}></div>
                     )
                 })}
             </div>
-            <button onClick={onCancel} className='text-sm text-slate-500 hover:text-blue-600'>Cancel</button>
-        </div>
+            <button onClick={onCancel} className='btn-ghost mx-auto'>Cancel</button>
+          </section>
+        </main>
     )
 }
 

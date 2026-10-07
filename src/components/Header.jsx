@@ -3,13 +3,16 @@ import ProjectLibrary from './ProjectLibrary'
 
 export default function Header({ onSelectProject, onNewProject }) {
     return (
-        <header className='flex items-center justify-between gap-4 p-4'>
-            <a href="/"><h1 className='font-medium'>Free<span className='text-blue-400 bold'>Scribe</span></h1></a>
-            <div className='gap-4 flex items-center '>
+        <header className='app-header'>
+            <a href='/' className='brand' aria-label='FreeScribe home'>
+                <span className='brand-mark' aria-hidden='true'><i className='fa-solid fa-wave-square'></i></span>
+                <span className='brand-name'>Free<span>Scribe</span></span>
+            </a>
+            <div className='header-actions'>
                 <ProjectLibrary onSelectProject={onSelectProject} />
-                <button onClick={onNewProject} className='flex items-center gap-2 specialBtn px-3 py-2 rounded-lg text-blue-400'>
-                    <p>New</p>
-                    <i className="fa-solid fa-plus"></i>
+                <button onClick={onNewProject} className='btn-primary'>
+                    <i className='fa-solid fa-plus' aria-hidden='true'></i>
+                    <span className='button-label'>New project</span>
                 </button>
             </div>
         </header>

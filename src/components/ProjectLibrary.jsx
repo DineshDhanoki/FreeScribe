@@ -115,11 +115,11 @@ export default function ProjectLibrary({ onSelectProject }) {
 
     return (
         <details onToggle={handleToggle} className='relative'>
-            <summary aria-label='Open saved projects' className='cursor-pointer list-none rounded-lg bg-white px-3 py-2 text-sm text-blue-400'>Projects</summary>
-            <div className='absolute right-0 z-10 mt-2 w-64 rounded-lg border border-slate-200 bg-white p-2 text-left shadow-lg'>
+            <summary aria-label='Open saved projects' className='btn-secondary cursor-pointer list-none'><i className='fa-regular fa-folder-open' aria-hidden='true'></i>Projects</summary>
+            <div className='project-menu'>
                 <input ref={importInput} type='file' accept='application/json,.json' onChange={handleImportProject} className='hidden' />
-                <button aria-label='Import project backup' onClick={() => importInput.current?.click()} className='mb-1 w-full border-b border-slate-100 p-2 text-left text-xs text-slate-500 hover:bg-blue-50'>Import project backup</button>
-                <button aria-label='Clear downloaded model files' disabled={clearingCache} onClick={handleClearModelCache} className='mb-1 w-full border-b border-slate-100 p-2 text-left text-xs text-slate-500 hover:bg-blue-50 disabled:opacity-50'>
+                <button aria-label='Import project backup' onClick={() => importInput.current?.click()} className='project-menu-action'><i className='fa-solid fa-file-import mr-2'></i>Import project backup</button>
+                <button aria-label='Clear downloaded model files' disabled={clearingCache} onClick={handleClearModelCache} className='project-menu-action disabled:opacity-50'>
                     {clearingCache ? 'Clearing model cache…' : 'Clear downloaded model files'}
                 </button>
                 {cacheMessage && <p role='status' className='p-2 text-xs text-slate-500'>{cacheMessage}</p>}
@@ -127,20 +127,20 @@ export default function ProjectLibrary({ onSelectProject }) {
                 {loading && <p role='status' className='p-2 text-xs text-slate-500'>Loading projects…</p>}
                 {error && <p className='p-2 text-xs text-rose-500'>{error}</p>}
                 {!loading && !error && projects.length === 0 && <p className='p-2 text-xs text-slate-500'>No saved projects yet.</p>}
-                {!loading && !error && projects.length > 0 && <button aria-label='Delete all saved projects' disabled={deletingAll || Boolean(deletingId)} onClick={handleDeleteAll} className='mb-1 w-full border-b border-slate-100 p-2 text-left text-xs text-rose-500 hover:bg-rose-50 disabled:opacity-50'>
+                {!loading && !error && projects.length > 0 && <button aria-label='Delete all saved projects' disabled={deletingAll || Boolean(deletingId)} onClick={handleDeleteAll} className='project-menu-action text-rose-500 hover:bg-rose-50 disabled:opacity-50'>
                     {deletingAll ? 'Deleting all…' : 'Delete all saved projects'}
                 </button>}
                 {!loading && projects.map((project) => (
-                    <div key={project.id} className='flex items-start gap-1 rounded hover:bg-blue-50'>
+                    <div key={project.id} className='project-row'>
                         <button onClick={(event) => handleSelect(event, project)} className='min-w-0 flex-1 truncate p-2 text-left text-sm'>
                             {project.name || 'Untitled transcript'}
                             <span className='block text-xs text-slate-400'>{new Date(project.updatedAt).toLocaleString()}</span>
                         </button>
-                        <button aria-label={`Delete ${project.name || 'project'}`} disabled={deletingId === project.id} onClick={(event) => handleDelete(event, project)} className='p-2 text-xs text-slate-400 hover:text-rose-500 disabled:opacity-50'>
-                            Delete
+                        <button aria-label={`Delete ${project.name || 'project'}`} title='Delete' disabled={deletingId === project.id} onClick={(event) => handleDelete(event, project)} className='project-icon-button hover:text-rose-500 disabled:opacity-50'>
+                            <i className='fa-regular fa-trash-can'></i>
                         </button>
-                        <button aria-label={`Export ${project.name || 'project'}`} onClick={(event) => handleExportProject(event, project)} className='p-2 text-xs text-slate-400 hover:text-blue-500'>
-                            Export
+                        <button aria-label={`Export ${project.name || 'project'}`} title='Export' onClick={(event) => handleExportProject(event, project)} className='project-icon-button hover:text-blue-500'>
+                            <i className='fa-solid fa-arrow-up-from-bracket'></i>
                         </button>
                     </div>
                 ))}

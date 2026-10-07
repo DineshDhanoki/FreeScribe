@@ -196,16 +196,19 @@ function App() {
   }
 
   return (
-    <div className='flex flex-col max-w-[1000px] mx-auto w-full'>
+    <div className='app-shell'>
       <section className='min-h-screen flex flex-col'>
         <Header onSelectProject={handleSelectProject} onNewProject={handleAudioReset} />
         {transcription.status === TranscriptionStatus.ERROR ? (
-          <main className='flex-1 flex flex-col items-center justify-center gap-4 p-4 text-center'>
-            <h1 className='font-semibold text-4xl'>Something went wrong</h1>
-            <p className='text-slate-500'>{transcription.error}</p>
+          <main className='workspace-wrap'>
+            <div className='error-card'>
+            <span className='error-icon' aria-hidden='true'><i className='fa-solid fa-triangle-exclamation'></i></span>
+            <h1 className='text-3xl font-extrabold text-slate-800'>Something went wrong</h1>
+            <p className='mx-auto mt-3 max-w-md leading-7 text-slate-500'>{transcription.error}</p>
             <div className='flex flex-wrap justify-center gap-3'>
-              {isAudioAvailable && <button onClick={handleFormSubmission} className='specialBtn px-3 py-2 rounded-lg text-blue-400'>Retry transcription</button>}
-              <button onClick={handleAudioReset} className='rounded-lg px-3 py-2 text-slate-500 hover:text-blue-600'>Choose another file</button>
+              {isAudioAvailable && <button onClick={handleFormSubmission} className='btn-primary mt-6'>Retry transcription</button>}
+              <button onClick={handleAudioReset} className='btn-ghost mt-6'>Choose another file</button>
+            </div>
             </div>
           </main>
         ) : transcription.output ? (
@@ -218,7 +221,6 @@ function App() {
           <HomePage setFile={setFile} setAudioStream={setAudioStream} />
         )}
       </section>
-      <footer></footer>
     </div>
   )
 }

@@ -90,23 +90,43 @@ export default function HomePage(props) {
 
 
     return (
-        <main className='flex-1  p-4 flex flex-col gap-3 text-center sm:gap-4  justify-center pb-20'>
-            <h1 className='font-semibold text-5xl sm:text-6xl md:text-7xl'>Free<span className='text-blue-400 bold'>Scribe</span></h1>
-            <h3 className='font-medium md:text-lg'>Record <span className='text-blue-400'>&rarr;</span> Transcribe <span className='text-blue-400'>&rarr;</span> Translate</h3>
-            <button aria-label={recordingStatus === 'recording' ? 'Stop recording' : 'Start recording'} onClick={recordingStatus === 'recording' ? stopRecording : startRecording} className='flex specialBtn px-4 py-2 rounded-xl items-center text-base justify-between gap-4 mx-auto w-72 max-w-full my-4'>
-                <p className='text-blue-400'>{recordingStatus === 'inactive' ? 'Record' : `Stop recording`}</p>
-                <div className='flex items-center gap-2'>
-                    {duration !== 0 && <p className='text-sm'>{duration}s</p>}
-                    <i className={"fa-solid duration-200 fa-microphone " + (recordingStatus === 'recording' ? ' text-rose-300' : "")}></i>
+        <main className='hero'>
+            <section className='hero-copy'>
+                <p className='eyebrow'><span className='eyebrow-dot'></span>Private, multilingual AI</p>
+                <h1 className='hero-title'>
+                    <span className='sr-only'>FreeScribe</span>
+                    <span aria-hidden='true'>Your voice,<br /><span className='accent'>clearly written.</span></span>
+                </h1>
+                <p className='hero-subtitle'>Add audio, create an editable transcript, and translate it into the language you need—all directly in your browser.</p>
+                <div className='workflow' aria-label='FreeScribe workflow'>
+                    <span><i className='fa-solid fa-microphone mr-2 text-blue-500'></i>Record</span>
+                    <span><i className='fa-solid fa-wand-magic-sparkles mr-2 text-indigo-500'></i>Transcribe</span>
+                    <span><i className='fa-solid fa-language mr-2 text-violet-500'></i>Translate</span>
                 </div>
-            </button>
-            {recordingError && <p role='alert' className='text-sm text-rose-500'>{recordingError}</p>}
-            <p className='text-base'>Or <label className='text-blue-400 cursor-pointer hover:text-blue-600 duration-200'>upload <input onChange={(e) => {
-                const tempFile = e.target.files[0]
-                setFile(tempFile)
-            }} className='hidden' type='file' accept='audio/*' /></label> an audio file</p>
-            <p className='text-xs text-slate-400'>Recordings are limited to {Math.round(AUDIO_LIMITS.maxDurationSeconds / 60)} minutes and 200 MB.</p>
-            <p className='italic text-slate-400'>Free now free forever</p>
+            </section>
+
+            <section className='capture-card' aria-labelledby='capture-heading'>
+                <h2 id='capture-heading' className='capture-heading'>Start with your audio</h2>
+                <p className='capture-copy'>Use your microphone or choose an audio file from this device.</p>
+                <button aria-label={recordingStatus === 'recording' ? 'Stop recording' : 'Start recording'} onClick={recordingStatus === 'recording' ? stopRecording : startRecording} className={'record-button ' + (recordingStatus === 'recording' ? 'recording' : '')}>
+                    <span>{recordingStatus === 'inactive' ? 'Start recording' : 'Stop recording'}</span>
+                    <span className='flex items-center gap-3'>
+                        {duration !== 0 && <span className='text-sm font-semibold tabular-nums'>{duration}s</span>}
+                        <span className='record-icon'><i className='fa-solid fa-microphone'></i></span>
+                    </span>
+                </button>
+                {recordingError && <p role='alert' className='rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-600'>{recordingError}</p>}
+                <div className='divider'>or</div>
+                <label className='upload-zone'>
+                    <span className='upload-icon' aria-hidden='true'><i className='fa-solid fa-arrow-up-from-bracket'></i></span>
+                    <span>
+                        <span className='upload-title'>Upload an audio file</span>
+                        <span className='upload-meta'>MP3, WAV, M4A, WebM and more</span>
+                    </span>
+                    <input onChange={(event) => setFile(event.target.files?.[0] || null)} className='sr-only' type='file' accept='audio/*' />
+                </label>
+                <p className='privacy-note'><i className='fa-solid fa-shield-halved text-emerald-500'></i><span>Audio stays on your device · </span><span>Recordings are limited to {Math.round(AUDIO_LIMITS.maxDurationSeconds / 60)} minutes and 200 MB.</span></p>
+            </section>
         </main>
     )
 }
