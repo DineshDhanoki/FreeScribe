@@ -252,10 +252,13 @@ export default function Information(props) {
             {sourceLanguage?.label && sourceLanguage.id !== 'auto' && (
                 <div role='status' className='language-badge'>
                     <i className='fa-solid fa-language text-blue-500' aria-hidden='true'></i>
-                    You spoke: <span className='text-blue-600'>{sourceLanguage.label}</span>
-                    {languageWasDetected && typeof languageConfidence === 'number' && ` · ${Math.round(languageConfidence * 100)}% confidence`}
+                    {languageWasDetected ? 'Detected spoken language:' : 'Spoken language:'} <span className='text-blue-600'>{sourceLanguage.label}</span>
+                    {languageWasDetected && typeof languageConfidence === 'number' && ` · ${Math.round(languageConfidence * 100)}% language confidence`}
                     {!languageWasDetected && <span className='font-normal text-slate-500'> · selected manually</span>}
                 </div>
+            )}
+            {languageWasDetected && typeof languageConfidence === 'number' && (
+                <p className='language-confidence-note'>This score describes language detection only, not word-by-word transcript accuracy.</p>
             )}
             {languageWasDetected && typeof languageConfidence === 'number' && languageConfidence < 0.6 && (
                 <p role='alert' className='notice mx-auto mt-4 max-w-2xl'>Low-confidence language guess. Select the spoken language manually and try again if the transcript looks wrong.</p>

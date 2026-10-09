@@ -134,6 +134,7 @@ h1, h2, h3, .bold { letter-spacing: -0.035em; }
 .result-title { color: var(--ink); font-size: clamp(2.3rem, 6vw, 4.2rem); font-weight: 800; line-height: 1; }
 .result-title span { color: var(--blue); }
 .language-badge { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; border: 1px solid #d4e3f8; border-radius: 999px; background: #eff6ff; padding: 8px 14px; color: #4a5d78; font-size: 0.8rem; font-weight: 700; }
+.language-confidence-note { margin: 8px auto 0; color: var(--muted); font-size: 0.72rem; }
 .result-card { border-radius: 24px; padding: clamp(18px, 4vw, 32px); }
 .audio-review { margin-bottom: 24px; border: 1px solid var(--line); border-radius: 16px; background: rgba(248, 250, 253, 0.82); padding: 14px 16px; text-align: left; }
 .audio-review-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; color: var(--ink); font-size: 0.8rem; font-weight: 800; }

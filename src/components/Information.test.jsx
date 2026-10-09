@@ -107,7 +107,8 @@ describe('Information translation integration', () => {
         modelId='Xenova/whisper-tiny'
       />,
     )
-    expect(screen.getByRole('status')).toHaveTextContent('You spoke: Bengali · 87% confidence')
+    expect(screen.getByRole('status')).toHaveTextContent('Detected spoken language: Bengali · 87% language confidence')
+    expect(screen.getByText(/language detection only, not word-by-word transcript accuracy/i)).toBeInTheDocument()
     expect(screen.getByText(/Whisper Base Multilingual/)).toBeInTheDocument()
   })
 
