@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { AUDIO_LIMITS, getSupportedRecordingMimeType } from '../services/audio/audio'
 
 export default function HomePage(props) {
-    const { setAudioStream, setFile } = props
+    const { setAudioStream, setFile, resetVersion } = props
 
     const [recordingStatus, setRecordingStatus] = useState('inactive')
     const [duration, setDuration] = useState(0)
@@ -88,6 +88,11 @@ export default function HomePage(props) {
         recordingStream.current?.getTracks().forEach((track) => track.stop())
     }, [])
 
+    useEffect(() => {
+        if (resetVersion === 0) return
+        document.getElementById('audio-upload')?.focus()
+    }, [resetVersion])
+
 
     return (
         <main className='hero'>
@@ -134,4 +139,5 @@ export default function HomePage(props) {
 HomePage.propTypes = {
     setAudioStream: PropTypes.func.isRequired,
     setFile: PropTypes.func.isRequired,
+    resetVersion: PropTypes.number,
 }

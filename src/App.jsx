@@ -17,9 +17,23 @@ import {
   transcriptionReducer,
 } from './services/transcription/transcriptionState'
 
+function getInitialTheme() {
+  try {
+    const savedTheme = typeof window !== 'undefined' && typeof window.localStorage?.getItem === 'function'
+      ? window.localStorage.getItem('freescribe-theme')
+      : null
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
+  } catch {
+    // Storage can be unavailable in privacy-restricted browsers and test environments.
+  }
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
 function App() {
+  const [theme, setTheme] = useState(getInitialTheme)
   const [file, setFile] = useState(null)
   const [audioStream, setAudioStream] = useState(null)
+  const [newProjectVersion, setNewProjectVersion] = useState(0)
   const [modelId, setModelId] = useState(DEFAULT_SPEECH_MODEL)
   const [languageId, setLanguageId] = useState(DEFAULT_TRANSCRIPTION_LANGUAGE)
   const [transcription, dispatchTranscription] = useReducer(
@@ -36,6 +50,15 @@ function App() {
   const runMetrics = useRef(null)
   const submissionGeneration = useRef(0)
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    try {
+      if (typeof window.localStorage?.setItem === 'function') window.localStorage.setItem('freescribe-theme', theme)
+    } catch {
+      // Continue without persistence when browser storage is unavailable.
+    }
+  }, [theme])
+
   function stopWorker() {
     workerCleanup.current?.()
     workerCleanup.current = null
@@ -48,6 +71,7 @@ function App() {
     stopWorker()
     setFile(null)
     setAudioStream(null)
+    setNewProjectVersion((version) => version + 1)
     dispatchTranscription({ type: TranscriptionAction.RESET })
   }
 
@@ -199,7 +223,12 @@ function App() {
     <div className='app-shell'>
       <a className='skip-link' href='#main-content'>Skip to main content</a>
       <section id='main-content' className='min-h-screen flex flex-col' tabIndex='-1'>
-        <Header onSelectProject={handleSelectProject} onNewProject={handleAudioReset} />
+        <Header
+          onSelectProject={handleSelectProject}
+          onNewProject={handleAudioReset}
+          theme={theme}
+          onToggleTheme={() => setTheme((currentTheme) => currentTheme === 'dark' ? 'light' : 'dark')}
+        />
         {transcription.status === TranscriptionStatus.ERROR ? (
           <main className='workspace-wrap'>
             <div className='error-card' role='alert'>
@@ -219,7 +248,7 @@ function App() {
         ) : isAudioAvailable ? (
           <FileDisplay handleFormSubmission={handleFormSubmission} handleAudioReset={handleAudioReset} file={file} audioStream={audioStream} modelId={modelId} setModelId={setModelId} languageId={languageId} setLanguageId={setLanguageId} />
         ) : (
-          <HomePage setFile={setFile} setAudioStream={setAudioStream} />
+          <HomePage setFile={setFile} setAudioStream={setAudioStream} resetVersion={newProjectVersion} />
         )}
       </section>
     </div>
