@@ -10,7 +10,7 @@ import { createPerformanceExport } from '../services/evaluation/export'
 import { isTranslationWorkerMessage, TranslationMessageType, WorkerMessageType } from '../services/workers/protocol'
 
 export default function Information(props) {
-    const { output, finished, metrics, initialTranslation, initialTranslationLanguage, sourceLanguage, languageConfidence, languageWasDetected, modelId } = props
+    const { output, finished, metrics, initialTranslation, initialTranslationLanguage, sourceLanguage, languageConfidence, languageWasDetected, modelId, audioSource } = props
     const [tab, setTab] = useState('transcription')
     const [segments, setSegments] = useState(() => normalizeSegments(output))
     const [translation, setTranslation] = useState(initialTranslation || null)
@@ -21,8 +21,21 @@ export default function Information(props) {
     const [saveState, setSaveState] = useState('idle')
     const [copyState, setCopyState] = useState('idle')
     const [benchmarkExportState, setBenchmarkExportState] = useState('idle')
+    const [audioUrl, setAudioUrl] = useState(null)
+    const [activeSegmentIndex, setActiveSegmentIndex] = useState(null)
     const projectId = useRef(null)
     const translationActive = useRef(false)
+    const audioRef = useRef(null)
+
+    useEffect(() => {
+        if (!audioSource) {
+            setAudioUrl(null)
+            return undefined
+        }
+        const nextAudioUrl = URL.createObjectURL(audioSource)
+        setAudioUrl(nextAudioUrl)
+        return () => URL.revokeObjectURL(nextAudioUrl)
+    }, [audioSource])
     useEffect(() => {
         setSegments(normalizeSegments(output))
         setTranslation(initialTranslation || null)
@@ -105,6 +118,23 @@ export default function Information(props) {
         )))
         setTranslation(null)
         setTranslationError(null)
+    }
+
+    function handleAudioTimeUpdate(event) {
+        const currentTime = event.currentTarget.currentTime
+        const nextIndex = segments.findIndex((segment, index) => {
+            const nextSegment = segments[index + 1]
+            const end = segment.end ?? nextSegment?.start ?? Number.POSITIVE_INFINITY
+            return currentTime >= segment.start && currentTime < end
+        })
+        setActiveSegmentIndex(nextIndex === -1 ? null : nextIndex)
+    }
+
+    function handleSegmentSeek(index) {
+        const segment = segments[index]
+        if (!audioRef.current || !segment) return
+        audioRef.current.currentTime = segment.start
+        audioRef.current.play().catch(() => {})
     }
 
     async function handleCopy() {
@@ -240,6 +270,13 @@ export default function Information(props) {
           </header>
 
           <section className='result-card'>
+            {audioUrl && <div className='audio-review'>
+              <div className='audio-review-heading'>
+                <span><i className='fa-solid fa-headphones' aria-hidden='true'></i> Review with audio</span>
+                <span className='audio-review-help'>Click a timestamp to jump here</span>
+              </div>
+              <audio ref={audioRef} src={audioUrl} aria-label='Transcription audio' controls preload='metadata' onTimeUpdate={handleAudioTimeUpdate} />
+            </div>}
             <div className='text-center'>
               <div role='tablist' aria-label='Transcript views' className='tab-list'>
                 <button id='transcription-tab' role='tab' tabIndex={tab === 'transcription' ? 0 : -1} aria-selected={tab === 'transcription'} aria-controls='transcription-panel' onKeyDown={(event) => handleTabKeyDown(event, 'transcription')} onClick={() => setTab('transcription')} className='tab-button'>Transcription</button>
@@ -253,7 +290,7 @@ export default function Information(props) {
                     </div>
                 )}
                 {tab === 'transcription' ? (
-                    <Transcription segments={segments} onSegmentChange={handleSegmentChange} />
+                    <Transcription segments={segments} onSegmentChange={handleSegmentChange} onSegmentSeek={handleSegmentSeek} activeSegmentIndex={activeSegmentIndex} />
                 ) : (
                     <Translation {...props} toLanguage={toLanguage} translating={translating} translationProgress={translationProgress} translationError={translationError} textElement={textElement} setTranslating={setTranslating} setTranslation={setTranslation} setToLanguage={setToLanguage} generateTranslation={generateTranslation} cancelTranslation={cancelTranslation} />
                 )}
@@ -306,4 +343,5 @@ Information.propTypes = {
     languageConfidence: PropTypes.number,
     languageWasDetected: PropTypes.bool,
     modelId: PropTypes.string.isRequired,
+    audioSource: PropTypes.object,
 }

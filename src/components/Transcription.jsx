@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 
-export default function Transcription({ segments, onSegmentChange }) {
+export default function Transcription({ segments, onSegmentChange, onSegmentSeek, activeSegmentIndex }) {
     return (
         <div className='segment-list text-left'>
             {segments.map((segment, index) => (
-                <label key={`${segment.index}-${index}`} className='segment-row'>
-                    <span className='segment-time'>
+                <div key={`${segment.index}-${index}`} className={`segment-row ${activeSegmentIndex === index ? 'active' : ''}`}>
+                    <button type='button' className='segment-time' onClick={() => onSegmentSeek(index)} aria-label={`Jump to transcript segment ${index + 1}`} aria-current={activeSegmentIndex === index ? 'true' : undefined}>
                         {segment.start.toFixed(1)}s
-                    </span>
+                    </button>
                     <textarea
                         aria-label={`Transcript segment ${index + 1}`}
                         value={segment.text}
@@ -15,7 +15,7 @@ export default function Transcription({ segments, onSegmentChange }) {
                         rows={Math.max(1, Math.ceil(segment.text.length / 70))}
                         className='segment-editor'
                     />
-                </label>
+                </div>
             ))}
             {segments.length === 0 && <p className='text-slate-500'>No transcript text was produced.</p>}
         </div>
@@ -29,4 +29,6 @@ Transcription.propTypes = {
         start: PropTypes.number.isRequired,
     })).isRequired,
     onSegmentChange: PropTypes.func.isRequired,
+    onSegmentSeek: PropTypes.func.isRequired,
+    activeSegmentIndex: PropTypes.number,
 }
