@@ -1,14 +1,22 @@
 import PropTypes from 'prop-types'
 
 export default function Transcribing(props) {
-    const { status, phase, downloading, progress, onCancel } = props
+    const { status, phase, downloading, progress, model, onCancel } = props
     const phaseLabel = status === 'decoding'
-        ? 'decoding audio locally'
+        ? 'Preparing your audio locally'
         : downloading
-            ? 'downloading model'
+            ? 'Downloading the local AI model'
             : phase === 'detecting'
-                ? 'detecting spoken language locally'
-            : 'transcribing audio locally'
+                ? 'Detecting the spoken language locally'
+            : 'Transcribing your audio locally'
+
+    const phaseHelp = status === 'decoding'
+        ? 'Your audio is being prepared in this browser.'
+        : downloading
+            ? `The first run can take longer. ${model?.label || 'The selected model'} will be cached for faster future runs.`
+            : phase === 'detecting'
+                ? 'FreeScribe is choosing the most likely supported language before transcription.'
+                : 'Your audio stays on this device while the transcript is generated.'
 
 
     return (
@@ -17,6 +25,8 @@ export default function Transcribing(props) {
             <span className='status-icon' aria-hidden='true'><i className='fa-solid fa-wave-square'></i></span>
             <h1 className='status-title'>Working on it</h1>
             <p className='status-subtitle'>{phaseLabel}</p>
+            <p className='status-help'>{phaseHelp}</p>
+            {downloading && model && <p className='model-download-note'><strong>{model.label}</strong> · approximately {model.approximateSize}</p>}
             {typeof progress === 'number' && <div className='mt-7'>
                 <div className='mb-2 flex justify-between text-xs font-semibold text-slate-500'><span>Model download</span><span>{Math.round(progress)}%</span></div>
                 <div role='progressbar' aria-label='Model download progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(progress)} className='progress-track'><div className='progress-fill' style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}></div></div>
@@ -39,5 +49,6 @@ Transcribing.propTypes = {
     downloading: PropTypes.bool,
     phase: PropTypes.string,
     progress: PropTypes.number,
+    model: PropTypes.shape({ label: PropTypes.string, approximateSize: PropTypes.string }),
     onCancel: PropTypes.func.isRequired,
 }

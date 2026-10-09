@@ -242,7 +242,7 @@ function App() {
         ) : transcription.output ? (
           <Information output={transcription.output} finished={transcription.status === TranscriptionStatus.SUCCESS} metrics={transcription.metrics} initialTranslation={transcription.translation} initialTranslationLanguage={transcription.translationLanguageId} sourceLanguage={getTranscriptionLanguage(languageId === 'auto' ? 'en' : languageId)} languageConfidence={transcription.languageConfidence} languageWasDetected={transcription.detectedLanguageId !== null} modelId={modelId} audioSource={file || audioStream} />
         ) : [TranscriptionStatus.DECODING, TranscriptionStatus.DOWNLOADING, TranscriptionStatus.TRANSCRIBING].includes(transcription.status) ? (
-          <Transcribing status={transcription.status} phase={transcription.phase} downloading={transcription.status === TranscriptionStatus.DOWNLOADING} progress={transcription.progress} onCancel={handleCancel} />
+          <Transcribing status={transcription.status} phase={transcription.phase} downloading={transcription.status === TranscriptionStatus.DOWNLOADING} progress={transcription.progress} model={getSpeechModel(modelId)} onCancel={handleCancel} />
         ) : isAudioAvailable ? (
           <FileDisplay handleFormSubmission={handleFormSubmission} handleAudioReset={handleAudioReset} file={file} audioStream={audioStream} modelId={modelId} setModelId={setModelId} languageId={languageId} setLanguageId={setLanguageId} />
         ) : (
