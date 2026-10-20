@@ -17,8 +17,10 @@
     "check:translation": "node scripts/check-evaluation.js --type translation --min-exact-match-rate 0.5 --min-character-fscore 0.7 --min-examples 2",
     "summarize:performance": "node scripts/summarize-performance.js",
     "merge:performance": "node scripts/merge-performance.js",
+    "docs:languages": "node scripts/generate-language-support.js",
+    "check:languages": "node scripts/generate-language-support.js --check",
     "security:audit": "npm audit --omit=dev",
-    "verify": "npm test && npm run evaluate:fixture && npm run evaluate:translation && npm run audit:fixture && npm run check:transcription && npm run check:translation && npm run summarize:performance && npm run lint && npm run build",
+    "verify": "npm test && npm run evaluate:fixture && npm run evaluate:translation && npm run audit:fixture && npm run check:transcription && npm run check:translation && npm run summarize:performance && npm run check:languages && npm run lint && npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
