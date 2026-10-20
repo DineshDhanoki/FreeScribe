@@ -38,6 +38,7 @@ The first transcription or translation downloads model files and may require sig
 - [Architecture](ARCHITECTURE.md)
 - [Privacy](PRIVACY.md)
 - [Model card](MODEL_CARD.md)
+- [Language and model support matrix](LANGUAGE_SUPPORT.md)
 - [Product roadmap](PRODUCT_ROADMAP.md)
 - [Security policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)

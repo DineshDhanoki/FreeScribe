@@ -168,4 +168,4 @@ export function getTranslationLanguage(languageId) {
 export function isSupportedWhisperLanguage(language) {
   return TRANSCRIPTION_LANGUAGES.some((item) => item.whisper && item.whisper === language)
 }
-import { LANGUAGES } from '../../utils/presets'
+import { LANGUAGES } from '../../utils/presets.js'
