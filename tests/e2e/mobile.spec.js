@@ -250,5 +250,3 @@ test('persists theme after reload', async ({ page }) => {
 
   await expectNoHorizontalOverflow(page)
 })
-
-

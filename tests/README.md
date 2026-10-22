@@ -1,36 +1,55 @@
 # Tests
 
-This directory will contain unit, integration, and end-to-end tests. Test fixtures must be synthetic, public-domain, or explicitly consented; never add private recordings.
+This directory contains unit, integration, and end-to-end tests. Test fixtures must be synthetic, public-domain, or explicitly consented; never add private recordings.
 
 The current suite includes pure service tests and browser-like component tests using Vitest, jsdom, and Testing Library. It covers audio validation/resampling, worker protocols, transcription state, storage schema normalization, local deletion, evaluation metrics, and performance summaries.
 
-The Playwright smoke suite runs against a real Chromium instance:
+## Playwright E2E Tests
+
+The Playwright suite runs against a real Chromium browser.
 
 ```bash
 npm run test:e2e
 ```
 
-It verifies application boot, accessible controls, upload configuration, and reopening a locally stored translated project. It intentionally does not claim microphone or live model-inference coverage yet.
+The tests verify application startup, accessible controls, upload configuration, and reopening locally stored projects.
+
+Microphone recording, permission handling, and error states are tested using mocked browser media APIs. Heavy model inference is also mocked to ensure deterministic testing without downloading or running real AI models.
 
 ## Mobile and Tablet E2E Tests
 
-Playwright covers desktop, phone, and tablet viewports.
+Playwright tests cover desktop, phone, and tablet viewports.
 
-The mobile tests verify:
+The responsive E2E tests verify:
 
-- Responsive navigation and primary controls
-- Microphone permission and recording error states
-- Audio upload and transcription configuration
-- Project saving and reopening through IndexedDB
-- Theme switching and persistence
-- Translation language selection
-- Horizontal overflow and control clipping
+- Mobile navigation and primary control accessibility.
+- Microphone permission and recording error states using mocked media APIs.
+- Recording start and stop behavior.
+- Synthetic audio file uploads and transcription configuration.
+- Project saving and reopening through IndexedDB.
+- Theme switching and persistence.
+- Translation language selection.
+- Horizontal overflow and control clipping.
 
-Browser media APIs and Whisper/NLLB inference are mocked
-using synthetic fixtures to keep tests deterministic and
-suitable for CI.
+Synthetic fixtures and mocked media APIs keep these tests deterministic and suitable for CI.
 
 ### Run Tests
 
 ```bash
 npm run test:e2e
+```
+
+### Real-Device Verification Still Required
+
+Playwright viewport emulation does not replace testing on physical mobile devices.
+
+The following areas require separate real-device verification:
+
+- Actual microphone permissions on Android and iOS.
+- Real microphone recording and audio quality.
+- Safari and mobile browser recording compatibility.
+- Whisper and NLLB model performance, memory usage, and inference speed.
+- Battery consumption and device thermal throttling.
+- Physical touch interactions and device-specific accessibility behavior.
+
+These limitations are outside the scope of the mocked E2E tests.
