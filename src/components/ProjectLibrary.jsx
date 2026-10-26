@@ -125,7 +125,7 @@ export default function ProjectLibrary({ onSelectProject }) {
                 {cacheMessage && <p role='status' className='p-2 text-xs text-slate-500'>{cacheMessage}</p>}
                 {transferMessage && <p role='status' className='p-2 text-xs text-slate-500'>{transferMessage}</p>}
                 {loading && <p role='status' className='p-2 text-xs text-slate-500'>Loading projects…</p>}
-                {error && <p className='p-2 text-xs text-rose-500'>{error}</p>}
+                {error && <p role='alert' className='p-2 text-xs text-rose-500'>{error}</p>}
                 {!loading && !error && projects.length === 0 && <p className='p-2 text-xs text-slate-500'>No saved projects yet.</p>}
                 {!loading && !error && projects.length > 0 && <button aria-label='Delete all saved projects' disabled={deletingAll || Boolean(deletingId)} onClick={handleDeleteAll} className='project-menu-action text-rose-500 hover:bg-rose-50 disabled:opacity-50'>
                     {deletingAll ? 'Deleting all…' : 'Delete all saved projects'}

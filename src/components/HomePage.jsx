@@ -120,6 +120,7 @@ export default function HomePage(props) {
                         <span className='record-icon'><i className='fa-solid fa-microphone'></i></span>
                     </span>
                 </button>
+                <p className='sr-only' role='status' aria-live='polite' aria-atomic='true'>{recordingStatus === 'recording' ? 'Recording started.' : duration > 0 ? 'Recording stopped.' : ''}</p>
                 {recordingError && <p role='alert' className='rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-600'>{recordingError}</p>}
                 <div className='divider'>or</div>
                 <label className='upload-zone' htmlFor='audio-upload'>

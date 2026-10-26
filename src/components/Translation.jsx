@@ -15,9 +15,9 @@ export default function Translation(props) {
                 </div>
             )}
             {translationError && <p role='alert' className='rounded-xl bg-rose-50 p-3 text-sm text-rose-600'>{translationError}</p>}
-            {translating && <div className='translation-progress'>
-                <div className='mb-2 flex justify-between text-xs font-semibold text-slate-500'><span>Preparing translation model</span><span>{typeof translationProgress === 'number' ? `${Math.round(translationProgress)}%` : 'Starting…'}</span></div>
-                {typeof translationProgress === 'number' && <div role='progressbar' aria-label='Translation model progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(translationProgress)} className='progress-track'><div className='progress-fill' style={{ width: `${Math.max(0, Math.min(100, translationProgress))}%` }}></div></div>}
+            {translating && <div className='translation-progress' aria-busy='true'>
+                <p className='mb-2 text-xs font-semibold text-slate-500' role='status' aria-live='polite' aria-atomic='true'>Preparing translation model{typeof translationProgress === 'number' ? `: ${Math.round(translationProgress)}%` : '…'}</p>
+                {typeof translationProgress === 'number' && <div role='progressbar' aria-label='Translation model progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(translationProgress)} aria-valuetext={`${Math.round(translationProgress)}% downloaded`} className='progress-track'><div className='progress-fill' style={{ width: `${Math.max(0, Math.min(100, translationProgress))}%` }}></div></div>}
                 <button onClick={cancelTranslation} className='btn-ghost mt-3'>Cancel translation</button>
             </div>}
             {!translating && (<div className='translation-controls'>
