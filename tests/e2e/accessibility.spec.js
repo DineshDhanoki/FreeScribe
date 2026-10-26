@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import process from 'node:process'
 
 test('keyboard reaches the skip link and labelled home controls', async ({ page }) => {
   await page.goto('/')
@@ -11,7 +12,7 @@ test('keyboard reaches the skip link and labelled home controls', async ({ page 
   await expect(page.getByLabel('Upload an audio file')).toBeAttached()
 })
 
-test('keyboard can review, translate, save, and reopen a transcript project', async ({ page }) => {
+test('keyboard can edit, verify stale translation is cleared, save, and reopen a transcript project', async ({ page }) => {
   await page.goto('/')
   await page.evaluate(async () => {
     await new Promise((resolve, reject) => {
@@ -45,7 +46,7 @@ test('keyboard can review, translate, save, and reopen a transcript project', as
   const editor = page.getByRole('textbox', { name: 'Transcript segment 1' })
   await expect(editor).toHaveValue('Keyboard accessible transcript')
   await editor.focus()
-  await page.keyboard.press('Control+A')
+  await page.keyboard.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A')
   await page.keyboard.type('Edited with keyboard')
   await expect(editor).toHaveValue('Edited with keyboard')
 
@@ -54,8 +55,10 @@ test('keyboard can review, translate, save, and reopen a transcript project', as
   await page.keyboard.press('ArrowRight')
   const translationTab = page.getByRole('tab', { name: 'Translation' })
   await expect(translationTab).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByRole('tabpanel', { name: 'Translation' })).toBeVisible()
-  await expect(page.getByText('Transcription accessible au clavier')).toBeVisible()
+  const translationPanel = page.getByRole('tabpanel', { name: 'Translation' })
+  await expect(translationPanel).toBeVisible()
+  await expect(translationPanel.getByText('Transcription accessible au clavier')).toHaveCount(0)
+  await expect(translationPanel.getByText('Select a target language to create a local translation.')).toBeVisible()
 
   await page.getByRole('tab', { name: 'Transcription' }).click()
   await page.getByRole('button', { name: 'Save locally' }).click()
