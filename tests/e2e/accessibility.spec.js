@@ -59,7 +59,8 @@ test('keyboard can review, translate, save, and reopen a transcript project', as
 
   await page.getByRole('tab', { name: 'Transcription' }).click()
   await page.getByRole('button', { name: 'Save locally' }).click()
-  await expect(page.getByRole('status')).toContainText('Project saved locally.')
+  await expect(page.getByText('Project saved locally.')).toBeVisible()
+  await expect(page.getByText('Project saved locally.')).toHaveAttribute('role', 'status')
   await page.getByText('Projects', { exact: true }).click()
   await expect(page.getByText('Edited with keyboard')).toBeVisible()
 })
