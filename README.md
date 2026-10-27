@@ -1,67 +1,97 @@
-# FreeScribe
+<div align="center">
+  <img src="public/freescribe.svg" alt="FreeScribe logo" width="72" />
 
-Privacy-first, browser-based speech transcription and translation.
+  <h1>FreeScribe</h1>
 
-FreeScribe records or uploads audio, runs Whisper locally in a Web Worker, and optionally translates the resulting transcript locally with NLLB. It is currently an alpha prototype and is not intended for clinical, legal, or other safety-critical use.
+  <p><strong>Your voice, clearly written.</strong></p>
 
-## Run locally
+  <p>Record or bring an audio file. Turn speech into editable text and subtitles, then translate it into another language—all in your browser.</p>
+
+  <p><a href="#try-freescribe">Get started</a> · <a href="#the-mission">Explore the mission</a> · <a href="#build-it-with-us">Find your first contribution</a></p>
+</div>
+
+---
+
+## The moment we are building for
+
+Imagine a student replaying a lecture to catch one sentence. A volunteer trying to share a community meeting with neighbors who speak another language. A creator who wants captions so more people can follow their work.
+
+Their words deserve to travel further than the recording. But turning audio into something people can read, edit, translate, and share is still too hard—and often means handing a recording to a service they did not choose.
+
+**FreeScribe is an open-source attempt to change that.** It gives people a place to work with spoken words on their own device. The app uses AI to draft a transcript; a person remains in charge of checking and editing it.
+
+![FreeScribe home screen showing microphone recording and audio upload](docs/freescribe-home.png)
+
+## The mission
+
+**Make spoken knowledge easier to understand, reuse, and share across languages, while giving people meaningful control over their recordings.**
+
+We want a student to revisit a lesson, a community group to make a meeting more accessible, and a small creator to publish captions without needing specialist software or an account. We also want contributors to be able to inspect how the models work, measure their mistakes, and improve the experience in public.
+
+This is a journey, not a finished promise. FreeScribe is currently an **alpha prototype**. The goal is dependable, accessible, multilingual transcription and translation whose strengths and limits are visible to its users.
+
+## What you can do today
+
+1. **Bring a voice in.** Record with your microphone or select an audio file.
+2. **Make it readable.** Whisper drafts a timestamped transcript in a browser worker. Choose a spoken language yourself or use local automatic detection.
+3. **Make it yours.** Review and edit segments, jump to parts of the audio, and optionally translate with NLLB.
+4. **Take it with you.** Copy text, export TXT, SRT, VTT, or JSON, and save a project in this browser for later.
+
+The app has no FreeScribe backend for audio processing. Model files download on first use, then transcription and translation run in your browser. Saved projects stay in that browser's local storage. Read the [privacy details](PRIVACY.md) before using sensitive audio: your browser, extensions, hosting provider, and any files you choose to export still matter.
+
+## Try FreeScribe
+
+You can run the current app locally with Node.js and npm:
 
 ```bash
-npm install
+git clone https://github.com/DineshDhanoki/FreeScribe.git
+cd FreeScribe
+npm ci
 npm run dev
 ```
 
-Useful checks:
+Open the local address printed by Vite. Choose **Start recording** or **Upload an audio file**, then follow the on-screen steps. The first model download can take time and use substantial bandwidth and memory; later runs may reuse the browser cache. For non-English speech, the multilingual Whisper Base model is the recommended starting point. If language detection is uncertain, select the language manually and retry.
+
+There is no hosted public demo linked here yet. A short, consented sample recording is the safest way to explore the workflow. Please do not record another person's voice without their permission.
+
+## What we are building next
+
+FreeScribe's [roadmap](PRODUCT_ROADMAP.md) separates shipped work from planned work. The most valuable next step is **evidence**: public or consented multilingual test audio, translation quality reports, and real device performance measurements. We also want better long-recording support, recoverable model downloads, stronger accessibility, speaker labels, and eventually live transcription. These are open work, not current features.
+
+Quality varies with language, accent, recording conditions, and device. Recordings are currently limited to **30 minutes and 200 MB**. FreeScribe should not be used as the sole record for clinical, legal, or other safety-critical decisions. Check the [language and model support matrix](LANGUAGE_SUPPORT.md) and [model card](MODEL_CARD.md) for specifics.
+
+## Build it with us
+
+You do not have to be an AI researcher to help. A careful bug report, a keyboard accessibility fix, a clearer error message, documentation, or a reproducible test can make the next person's experience better.
+
+| If you enjoy… | A place to start |
+| --- | --- |
+| Making your first open-source pull request | Take the [first-run walkthrough](https://github.com/DineshDhanoki/FreeScribe/issues/25), a scoped documentation task. |
+| Explaining things clearly | Improve a confusing screen or the [documentation](CONTRIBUTING.md). |
+| Making software usable for more people | Help with [accessibility](https://github.com/DineshDhanoki/FreeScribe/issues/18). |
+| Privacy and trust | Help verify the [local processing path](https://github.com/DineshDhanoki/FreeScribe/issues/17). |
+| AI and language quality | Explore [multilingual evaluation](https://github.com/DineshDhanoki/FreeScribe/issues/5) or [translation benchmarking](https://github.com/DineshDhanoki/FreeScribe/issues/6). |
+| Browser performance | Measure [cold and warm runs on real devices](https://github.com/DineshDhanoki/FreeScribe/issues/11). |
+
+Start with the [open issues](https://github.com/DineshDhanoki/FreeScribe/issues), or [open a discussion](https://github.com/DineshDhanoki/FreeScribe/discussions) if you are unsure where your idea fits. Before writing code, read [CONTRIBUTING.md](CONTRIBUTING.md) and add a short note to the issue you want to work on. We value small, reviewable pull requests with a clear user problem and a way to verify the result. Newcomers are welcome to ask for a smaller first step on any issue.
+
+**A useful contribution can be one line that helps someone understand their own words.**
+
+## For developers
 
 ```bash
 npm test
 npm run lint
 npm run build
-npm run evaluate:fixture
-npm run evaluate:translation
-npm run summarize:performance
 ```
 
-Evaluation commands also accept `--output evaluation/results/report.json` to save JSON reports locally; generated results are ignored by Git.
+`npm run verify` runs the broader local checks, including synthetic transcription and translation evaluation fixtures. Those fixtures are useful for regressions but are **not proof of real-world accuracy**. See the [architecture](ARCHITECTURE.md), [performance notes](PERFORMANCE.md), and [roadmap](PRODUCT_ROADMAP.md) for the technical direction.
 
-The first transcription or translation downloads model files and may require significant memory and bandwidth.
+## Trust and stewardship
 
-## Troubleshooting first use
+- Read [PRIVACY.md](PRIVACY.md) for the data flow and local storage behavior.
+- Read [SECURITY.md](SECURITY.md) to report a vulnerability privately.
+- Read the [code of conduct](CODE_OF_CONDUCT.md), [governance](GOVERNANCE.md), and [support guide](SUPPORT.md) for how we work together.
+- FreeScribe's original source is [MIT-licensed](LICENSE). Downloaded Whisper and NLLB model files, and any contributed datasets, have their own licenses and restrictions.
 
-- Keep the tab open while the model downloads; later runs reuse the browser cache.
-- Use `Xenova/whisper-base` for better multilingual accuracy and `Xenova/whisper-tiny` when speed matters more.
-- If automatic language detection is uncertain, select the spoken language manually before retrying.
-- For a clean reset, open **Projects** and choose **Clear downloaded model files**, then reload the page.
-
-## Documentation
-
-- [Architecture](ARCHITECTURE.md)
-- [Privacy](PRIVACY.md)
-- [Model card](MODEL_CARD.md)
-- [Language and model support matrix](LANGUAGE_SUPPORT.md)
-- [Product roadmap](PRODUCT_ROADMAP.md)
-- [Security policy](SECURITY.md)
-- [Contributing](CONTRIBUTING.md)
-- [Performance](PERFORMANCE.md)
-- [Code of conduct](CODE_OF_CONDUCT.md)
-- [Governance](GOVERNANCE.md)
-- [Getting help](SUPPORT.md)
-- [License](LICENSE)
-
-## Current limitations
-
-- Multilingual transcription defaults to the more accurate `Xenova/whisper-base` with local automatic spoken-language detection. `Xenova/whisper-tiny` remains available as a faster, lower-accuracy option. The UI exposes major Indian/South Asian languages (including Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Malayalam, Punjabi, Odia, Assamese, Nepali and Sanskrit) plus major world languages. English-only models intentionally restrict language selection.
-- Automatic detection loads a separate local speech-language model and analyzes up to the first 15 seconds; first-use download time can be substantial, while warm-cache detection is much faster. The result screen reports the detected language and confidence. If the strongest detector result is unsupported, FreeScribe asks for manual selection instead of silently choosing a weaker guess.
-- Translation quality and supported source/target language pairs depend on the selected NLLB model configuration.
-- Browser support, model performance, and accuracy vary by device and audio quality.
-- No server-side storage is provided.
-- Saved projects use browser IndexedDB and remain on the current device/browser.
-- Audio input is limited to 200 MB and 30 minutes per recording.
-
-Never commit real recordings, patient information, or private transcripts.
-
-## License
-
-FreeScribe's original source code is licensed under the MIT License. The
-Whisper and NLLB model files downloaded at runtime are separate dependencies
-and remain subject to their respective model licenses and usage restrictions.
+Never commit real recordings, patient information, private transcripts, credentials, or model files.
