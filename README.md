@@ -66,6 +66,7 @@ You do not have to be an AI researcher to help. A careful bug report, a keyboard
 
 | If you enjoy… | A place to start |
 | --- | --- |
+| Making your first open-source pull request | Take the [first-run walkthrough](https://github.com/DineshDhanoki/FreeScribe/issues/25), a scoped documentation task. |
 | Explaining things clearly | Improve a confusing screen or the [documentation](CONTRIBUTING.md). |
 | Making software usable for more people | Help with [accessibility](https://github.com/DineshDhanoki/FreeScribe/issues/18). |
 | Privacy and trust | Help verify the [local processing path](https://github.com/DineshDhanoki/FreeScribe/issues/17). |
