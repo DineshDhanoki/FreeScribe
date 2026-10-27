@@ -2,9 +2,10 @@ export async function mockBrowserApis(page, options = {}) {
   const {
     permission = 'granted',
     recordingSupported = true,
+    pauseTranscriptionAtDownload = false,
   } = options
 
-  await page.addInitScript(({ permission, recordingSupported }) => {
+  await page.addInitScript(({ permission, recordingSupported, pauseTranscriptionAtDownload }) => {
     // 1. Microphone mock
     window.__microphoneStopped = false
 
@@ -83,6 +84,7 @@ export async function mockBrowserApis(page, options = {}) {
           'translate.worker'
         )
         this.listeners = new Map()
+        if (!this.isTranslation) window.__transcriptionWorker = this
       }
 
       addEventListener(type, listener) {
@@ -108,6 +110,10 @@ export async function mockBrowserApis(page, options = {}) {
         if (!this.isTranslation &&
             message.type === 'INFERENCE_REQUEST') {
           queueMicrotask(() => {
+            if (pauseTranscriptionAtDownload) {
+              this.emit({ type: 'DOWNLOADING', progress: 37 })
+              return
+            }
             this.emit({ type: 'LOADING', status: 'ready' })
             this.emit({
               type: 'RESULT',
@@ -142,5 +148,5 @@ export async function mockBrowserApis(page, options = {}) {
     }
 
     window.Worker = MockWorker
-  }, { permission, recordingSupported })
+  }, { permission, recordingSupported, pauseTranscriptionAtDownload })
 }

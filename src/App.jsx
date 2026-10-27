@@ -33,6 +33,7 @@ function App() {
   const [theme, setTheme] = useState(getInitialTheme)
   const [file, setFile] = useState(null)
   const [audioStream, setAudioStream] = useState(null)
+  const [recordingAnnouncement, setRecordingAnnouncement] = useState('')
   const [newProjectVersion, setNewProjectVersion] = useState(0)
   const [modelId, setModelId] = useState(DEFAULT_SPEECH_MODEL)
   const [languageId, setLanguageId] = useState(DEFAULT_TRANSCRIPTION_LANGUAGE)
@@ -71,6 +72,7 @@ function App() {
     stopWorker()
     setFile(null)
     setAudioStream(null)
+    setRecordingAnnouncement('')
     setNewProjectVersion((version) => version + 1)
     dispatchTranscription({ type: TranscriptionAction.RESET })
   }
@@ -89,6 +91,7 @@ function App() {
     stopWorker()
     setFile(null)
     setAudioStream(null)
+    setRecordingAnnouncement('')
     if (project.modelId) setModelId(project.modelId)
     if (project.languageId) setLanguageId(project.languageId)
     dispatchTranscription({
@@ -185,6 +188,7 @@ function App() {
 
   async function handleFormSubmission() {
     if (!file && !audioStream) { return }
+    setRecordingAnnouncement('')
 
     const generation = submissionGeneration.current + 1
     submissionGeneration.current = generation
@@ -220,6 +224,7 @@ function App() {
   return (
     <div className='app-shell'>
       <a className='skip-link' href='#main-content'>Skip to main content</a>
+      <p className='sr-only' role='status' aria-live='polite' aria-atomic='true'>{recordingAnnouncement}</p>
       <section id='main-content' className='min-h-screen flex flex-col' tabIndex='-1'>
         <Header
           onSelectProject={handleSelectProject}
@@ -246,7 +251,7 @@ function App() {
         ) : isAudioAvailable ? (
           <FileDisplay handleFormSubmission={handleFormSubmission} handleAudioReset={handleAudioReset} file={file} audioStream={audioStream} modelId={modelId} setModelId={setModelId} languageId={languageId} setLanguageId={setLanguageId} />
         ) : (
-          <HomePage setFile={setFile} setAudioStream={setAudioStream} resetVersion={newProjectVersion} />
+          <HomePage setFile={setFile} setAudioStream={setAudioStream} onRecordingAnnouncement={setRecordingAnnouncement} resetVersion={newProjectVersion} />
         )}
       </section>
     </div>

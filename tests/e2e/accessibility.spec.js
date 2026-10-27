@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import process from 'node:process'
+import { mockBrowserApis } from './helpers/mockBrowserApis.js'
 
 test('keyboard reaches the skip link and labelled home controls', async ({ page }) => {
   await page.goto('/')
@@ -68,17 +69,50 @@ test('keyboard can edit, verify stale translation is cleared, save, and reopen a
   await expect(page.getByText('Edited with keyboard')).toBeVisible()
 })
 
-test('processing progress exposes a meaningful name and value text', async ({ page }) => {
+test('quick recording stop and processing stay announced through the full project journey', async ({ page }) => {
+  await mockBrowserApis(page, { pauseTranscriptionAtDownload: true })
   await page.goto('/')
+
+  await page.getByRole('button', { name: 'Start recording' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Recording started.' })).toBeVisible()
+  await page.getByRole('button', { name: 'Stop recording' }).click()
+  await expect(page.getByRole('heading', { name: 'Review your audio' })).toBeVisible()
+  await expect(page.getByRole('status').filter({ hasText: 'Recording stopped.' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Transcribe audio' }).click()
+  await expect(page.getByText('Downloading the local AI model')).toBeVisible()
+  const progress = page.getByRole('progressbar', { name: 'Model download progress' })
+  await expect(progress).toHaveAttribute('aria-valuemin', '0')
+  await expect(progress).toHaveAttribute('aria-valuemax', '100')
+  await expect(progress).toHaveAttribute('aria-valuenow', '37')
+  await expect(progress).toHaveAttribute('aria-valuetext', '37% downloaded')
+
   await page.evaluate(() => {
-    const progress = document.createElement('div')
-    progress.setAttribute('role', 'progressbar')
-    progress.setAttribute('aria-label', 'Model download progress')
-    progress.setAttribute('aria-valuemin', '0')
-    progress.setAttribute('aria-valuemax', '100')
-    progress.setAttribute('aria-valuenow', '37')
-    progress.setAttribute('aria-valuetext', '37% downloaded')
-    document.body.append(progress)
+    window.__transcriptionWorker.emit({ type: 'LOADING', status: 'ready' })
+    window.__transcriptionWorker.emit({ type: 'INFERENCE_PROGRESS', phase: 'detecting' })
   })
-  await expect(page.getByRole('progressbar', { name: 'Model download progress' })).toHaveAttribute('aria-valuetext', '37% downloaded')
+  await expect(page.getByText('Detecting the spoken language locally')).toBeVisible()
+  await page.evaluate(() => {
+    window.__transcriptionWorker.emit({ type: 'INFERENCE_PROGRESS', phase: 'transcribing' })
+  })
+  await expect(page.getByText('Transcribing your audio locally')).toBeVisible()
+  await page.evaluate(() => {
+    window.__transcriptionWorker.emit({
+      type: 'RESULT',
+      results: [{ index: 0, text: 'Synthetic mobile transcript', start: 0, end: 1 }],
+    })
+    window.__transcriptionWorker.emit({ type: 'INFERENCE_DONE' })
+  })
+
+  await expect(page.getByRole('textbox', { name: 'Transcript segment 1' })).toHaveValue('Synthetic mobile transcript')
+  await page.getByRole('tab', { name: 'Translation' }).click()
+  await page.getByLabel('Translation target language').selectOption('fra_Latn')
+  await page.getByRole('button', { name: 'Translate', exact: true }).click()
+  await expect(page.getByText('Transcription mobile synthétique')).toBeVisible()
+  await page.getByRole('button', { name: 'Save locally' }).click()
+  await expect(page.getByText('Project saved locally.')).toBeVisible()
+  await page.getByRole('button', { name: 'Start a new project' }).click()
+  await page.getByText('Projects', { exact: true }).click()
+  await page.getByRole('button', { name: /^Synthetic mobile transcript\s/ }).click()
+  await expect(page.getByRole('textbox', { name: 'Transcript segment 1' })).toHaveValue('Synthetic mobile transcript')
 })
