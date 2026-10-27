@@ -24,12 +24,12 @@ export default function Transcribing(props) {
           <section className='status-card'>
             <span className='status-icon' aria-hidden='true'><i className='fa-solid fa-wave-square'></i></span>
             <h1 className='status-title'>Working on it</h1>
-            <p className='status-subtitle'>{phaseLabel}</p>
+            <p className='status-subtitle' aria-live='polite' aria-atomic='true'>{phaseLabel}</p>
             <p className='status-help'>{phaseHelp}</p>
             {downloading && model && <p className='model-download-note'><strong>{model.label}</strong> · approximately {model.approximateSize}</p>}
             {typeof progress === 'number' && <div className='mt-7'>
-                <div className='mb-2 flex justify-between text-xs font-semibold text-slate-500'><span>Model download</span><span>{Math.round(progress)}%</span></div>
-                <div role='progressbar' aria-label='Model download progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(progress)} className='progress-track'><div className='progress-fill' style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}></div></div>
+                <div className='mb-2 flex justify-between text-xs font-semibold text-slate-500'><span>Model download</span><span aria-hidden='true'>{Math.round(progress)}%</span></div>
+                <div role='progressbar' aria-label='Model download progress' aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(progress)} aria-valuetext={`${Math.round(progress)}% downloaded`} className='progress-track'><div className='progress-fill' style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}></div></div>
             </div>}
             <div className='processing-lines'>
                 {[0, 1, 2].map(val => {

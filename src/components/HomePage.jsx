@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { AUDIO_LIMITS, getSupportedRecordingMimeType } from '../services/audio/audio'
 
 export default function HomePage(props) {
-    const { setAudioStream, setFile, resetVersion } = props
+    const { setAudioStream, setFile, onRecordingAnnouncement, resetVersion } = props
 
     const [recordingStatus, setRecordingStatus] = useState('inactive')
     const [duration, setDuration] = useState(0)
@@ -13,9 +13,11 @@ export default function HomePage(props) {
     const recordingStream = useRef(null)
     const audioChunks = useRef([])
     const durationRef = useRef(0)
+    const recordingFailed = useRef(false)
 
     async function startRecording() {
         setRecordingError(null)
+        onRecordingAnnouncement?.('')
         try {
             recordingStream.current = await navigator.mediaDevices.getUserMedia({
                 audio: true,
@@ -38,18 +40,23 @@ export default function HomePage(props) {
         const media = new MediaRecorder(recordingStream.current, { mimeType })
         mediaRecorder.current = media
         audioChunks.current = []
+        recordingFailed.current = false
 
         media.ondataavailable = (event) => {
             if (event.data?.size) audioChunks.current.push(event.data)
         }
         media.onerror = () => {
+            recordingFailed.current = true
             setRecordingError('The recording failed. Please try again.')
             setRecordingStatus('inactive')
+            onRecordingAnnouncement?.('')
             if (media.state === 'recording') media.stop()
         }
         media.onstop = () => {
-            const audioBlob = new Blob(audioChunks.current, { type: mimeType })
-            setAudioStream(audioBlob)
+            if (!recordingFailed.current) {
+                const audioBlob = new Blob(audioChunks.current, { type: mimeType })
+                setAudioStream(audioBlob)
+            }
             audioChunks.current = []
             recordingStream.current?.getTracks().forEach((track) => track.stop())
             recordingStream.current = null
@@ -60,11 +67,15 @@ export default function HomePage(props) {
 
         media.start()
         setRecordingStatus('recording')
+        onRecordingAnnouncement?.('Recording started.')
     }
 
     async function stopRecording() {
         setRecordingStatus('inactive')
-        if (mediaRecorder.current?.state === 'recording') mediaRecorder.current.stop()
+        if (mediaRecorder.current?.state === 'recording') {
+            onRecordingAnnouncement?.('Recording stopped.')
+            mediaRecorder.current.stop()
+        }
     }
 
     useEffect(() => {
@@ -76,12 +87,13 @@ export default function HomePage(props) {
             setDuration(nextDuration)
             if (nextDuration >= AUDIO_LIMITS.maxDurationSeconds && mediaRecorder.current?.state === 'recording') {
                 setRecordingStatus('inactive')
+                onRecordingAnnouncement?.('Recording stopped.')
                 mediaRecorder.current.stop()
             }
         }, 1000)
 
         return () => clearInterval(interval)
-    }, [recordingStatus])
+    }, [recordingStatus, onRecordingAnnouncement])
 
     useEffect(() => () => {
         if (mediaRecorder.current?.state === 'recording') mediaRecorder.current.stop()
@@ -139,5 +151,6 @@ export default function HomePage(props) {
 HomePage.propTypes = {
     setAudioStream: PropTypes.func.isRequired,
     setFile: PropTypes.func.isRequired,
+    onRecordingAnnouncement: PropTypes.func,
     resetVersion: PropTypes.number,
 }

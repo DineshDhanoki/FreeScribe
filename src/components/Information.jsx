@@ -286,17 +286,16 @@ export default function Information(props) {
                 <button id='translation-tab' role='tab' tabIndex={tab === 'translation' ? 0 : -1} aria-selected={tab === 'translation'} aria-controls='translation-panel' onKeyDown={(event) => handleTabKeyDown(event, 'translation')} onClick={() => setTab('translation')} className='tab-button'>Translation</button>
               </div>
             </div>
-            <div id={tab === 'transcription' ? 'transcription-panel' : 'translation-panel'} role='tabpanel' aria-labelledby={tab === 'transcription' ? 'transcription-tab' : 'translation-tab'} tabIndex='0' className='result-panel'>
-                {(!finished || translating) && (
-                    <div className='mb-4 grid place-items-center text-blue-500'>
+            <div id='transcription-panel' role='tabpanel' aria-labelledby='transcription-tab' tabIndex='0' hidden={tab !== 'transcription'} className='result-panel'>
+                {(!finished || translating) && tab === 'transcription' && (
+                    <div className='mb-4 grid place-items-center text-blue-500' aria-hidden='true'>
                         <i className='fa-solid fa-spinner animate-spin'></i>
                     </div>
                 )}
-                {tab === 'transcription' ? (
-                    <Transcription segments={segments} onSegmentChange={handleSegmentChange} onSegmentSeek={handleSegmentSeek} activeSegmentIndex={activeSegmentIndex} />
-                ) : (
-                    <Translation {...props} toLanguage={toLanguage} translating={translating} translationProgress={translationProgress} translationError={translationError} textElement={textElement} setTranslating={setTranslating} setTranslation={setTranslation} setToLanguage={setToLanguage} generateTranslation={generateTranslation} cancelTranslation={cancelTranslation} />
-                )}
+                <Transcription segments={segments} onSegmentChange={handleSegmentChange} onSegmentSeek={handleSegmentSeek} activeSegmentIndex={activeSegmentIndex} />
+            </div>
+            <div id='translation-panel' role='tabpanel' aria-labelledby='translation-tab' tabIndex='0' hidden={tab !== 'translation'} className='result-panel'>
+                <Translation {...props} toLanguage={toLanguage} translating={translating} translationProgress={translationProgress} translationError={translationError} textElement={translation || ''} setTranslating={setTranslating} setTranslation={setTranslation} setToLanguage={setToLanguage} generateTranslation={generateTranslation} cancelTranslation={cancelTranslation} />
             </div>
             <div className='action-bar'>
                 <button onClick={handleSaveProject} disabled={saveState === 'saving'} className='btn-secondary'>
@@ -320,6 +319,8 @@ export default function Information(props) {
                 </button>}
             </div>
             <div className='mt-3 text-center'>
+              {saveState === 'saved' && <p role='status' aria-live='polite'>Project saved locally.</p>}
+              {saveState === 'saving' && <p role='status' aria-live='polite'>Saving project locally…</p>}
               {saveState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not save this project locally.</p>}
               {copyState === 'copied' && <p role='status' className='text-sm text-emerald-600'>Transcript copied.</p>}
               {copyState === 'error' && <p role='alert' className='text-sm text-rose-500'>Could not copy the transcript.</p>}
